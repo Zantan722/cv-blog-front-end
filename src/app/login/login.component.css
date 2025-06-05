@@ -1,0 +1,53 @@
+.password-requirements {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+.password-requirements ul {
+  margin: 4px 0;
+  padding-left: 16px;
+  list-style: none;
+}
+
+.password-requirements li {
+  color: #ef4444;
+  transition: color 0.2s ease;
+  position: relative;
+  padding-left: 20px;
+}
+
+.password-requirements li::before {
+  content: "✗";
+  position: absolute;
+  left: 0;
+  color: #ef4444;
+}
+
+.password-requirements li.valid {
+  color: #10b981;
+}
+
+.password-requirements li.valid::before {
+  content: "✓";
+  color: #10b981;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.form-group input.error {
+  border-color: #ef4444;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
