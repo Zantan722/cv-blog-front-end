@@ -1,14 +1,15 @@
+import { safeJsonParse } from './../../../node_modules/typed-assert/src/index';
 import { CommonModule } from '@angular/common';
 import { LoginModel } from './../models/login.model';
 import { LoginService } from './../service/login.service';
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, CommonModule,HttpClientModule],
+  imports: [ReactiveFormsModule, CommonModule, HttpClientModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -149,10 +150,13 @@ export class LoginComponent implements OnInit {
       this.loginService.login(loginData).subscribe({
         next: (response) => {
           console.log('登入成功:', response);
+          localStorage.setItem('jwt', response);
           this.router.navigate(['']);
         },
-        error: (error) => {
+        error: (error: HttpErrorResponse) => {
           console.error('登入失敗:', error);
+          const jsonData = JSON.parse(error.error);
+          alert(jsonData['message']);
         }
       });
     } else {

@@ -11,7 +11,11 @@ export class LoginService {
 
   }
   login(value: LoginModel) {
-    return this.http.post(this.url + '/jwtLogin', value);
+    // return this.http.post(this.url + 'https://cv-user-service-app-683332902245.asia-east1.run.app/common/login', value);
+    console.log("123123123");
+    return this.http.post(this.url + '/common/login', value, {
+      responseType: 'text' // 不解析 JSON
+    });
   }
 
 }
