@@ -1,0 +1,288 @@
+/* src/app/blog-detail/blog-detail.component.css */
+.blog-detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 載入狀態 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 錯誤狀態 */
+.error-container {
+  text-align: center;
+  padding: 60px 20px;
+  color: #dc3545;
+}
+
+.error-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.error-container h2 {
+  color: #dc3545;
+  margin-bottom: 10px;
+}
+
+.error-container p {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/* 按鈕樣式 */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #545b62;
+}
+
+/* 部落格內容區 */
+.blog-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* 頂部操作區 */
+.blog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* 標題區 */
+.blog-title-section {
+  padding: 40px 30px 20px;
+}
+
+.blog-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #212529;
+  line-height: 1.3;
+  margin: 0;
+}
+
+/* 文章資訊 */
+.blog-meta {
+  padding: 0 30px 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.meta-item {
+  display: inline-block;
+  margin-right: 30px;
+  margin-bottom: 10px;
+}
+
+.meta-label {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.meta-value {
+  color: #495057;
+  margin-left: 5px;
+}
+
+.meta-value.author {
+  font-weight: 600;
+  color: #007bff;
+}
+
+.meta-value.date {
+  color: #6c757d;
+}
+
+/* 標籤區 */
+.blog-tags {
+  padding: 20px 30px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tags-label {
+  color: #6c757d;
+  font-weight: 500;
+  margin-right: 15px;
+}
+
+.tags-container {
+  display: inline-block;
+}
+
+.tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-right: 8px;
+  margin-bottom: 5px;
+  cursor: default;
+  transition: transform 0.2s ease;
+}
+
+.tag:hover {
+  transform: translateY(-1px);
+}
+
+/* 內容區 */
+.blog-content-section {
+  padding: 40px 30px;
+}
+
+.content-wrapper {
+  max-width: 100%;
+}
+
+.blog-text {
+  color: #495057;
+  font-size: 16px;
+  line-height: 1.8;
+  word-wrap: break-word;
+}
+
+.blog-text p {
+  margin-bottom: 20px;
+}
+
+.blog-text h1,
+.blog-text h2,
+.blog-text h3,
+.blog-text h4,
+.blog-text h5,
+.blog-text h6 {
+  margin-top: 30px;
+  margin-bottom: 15px;
+  color: #212529;
+}
+
+.blog-text ul,
+.blog-text ol {
+  margin-bottom: 20px;
+  padding-left: 30px;
+}
+
+.blog-text li {
+  margin-bottom: 8px;
+}
+
+.blog-text code {
+  background: #f8f9fa;
+  color: #e83e8c;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.blog-text pre {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 20px 0;
+}
+
+/* 底部操作區 */
+.blog-footer {
+  padding: 20px 30px;
+  background: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .blog-detail-container {
+    padding: 10px;
+  }
+
+  .blog-header,
+  .blog-title-section,
+  .blog-meta,
+  .blog-tags,
+  .blog-content-section,
+  .blog-footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .blog-title {
+    font-size: 24px;
+  }
+
+  .meta-item {
+    display: block;
+    margin-right: 0;
+  }
+
+  .blog-header,
+  .footer-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+}

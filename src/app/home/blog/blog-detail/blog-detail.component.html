@@ -1,0 +1,88 @@
+<!-- src/app/blog-detail/blog-detail.component.html -->
+<div class="blog-detail-container">
+  <!-- 載入狀態 -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>載入中...</p>
+  </div>
+
+  <!-- 錯誤狀態 -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h2>載入失敗</h2>
+    <p>{{ error }}</p>
+    <button class="btn btn-primary" (click)="goBack()">返回列表</button>
+  </div>
+
+  <!-- 部落格內容 -->
+  <div *ngIf="blog && !isLoading && !error" class="blog-content">
+    <!-- 頂部操作區 -->
+    <div class="blog-header">
+      <button class="btn btn-secondary" (click)="goBack()">
+        ← 返回列表
+      </button>
+      <button class="btn btn-primary" (click)="editBlog()">
+        編輯文章
+      </button>
+    </div>
+
+    <!-- 文章標題 -->
+    <div class="blog-title-section">
+      <h1 class="blog-title">{{ blog.title }}</h1> <!-- ✅ 移除 ? -->
+    </div>
+
+    <!-- 文章資訊 -->
+    <div class="blog-meta">
+      <div class="meta-item">
+        <span class="meta-label">作者：</span>
+        <span class="meta-value author">{{ blog.author }}</span> <!-- ✅ 移除 ? -->
+      </div>
+      
+      <div class="meta-item">
+        <span class="meta-label">建立時間：</span>
+        <span class="meta-value date">{{ formatDateTime(blog.createDate) }}</span> <!-- ✅ 使用格式化方法 -->
+      </div>
+      
+      <div class="meta-item" *ngIf="blog.updateDate && blog.updateDate !== blog.createDate">
+        <span class="meta-label">更新時間：</span>
+        <span class="meta-value date">{{ formatDateTime(blog.updateDate) }}</span> <!-- ✅ 修正條件和格式化 -->
+      </div>
+    </div>
+
+    <!-- 標籤 -->
+    <div class="blog-tags" *ngIf="blog.tags && blog.tags.length > 0">
+      <span class="tags-label">標籤：</span>
+      <div class="tags-container">
+        <span 
+          *ngFor="let tag of blog.tags" 
+          class="tag"
+          [title]="tag">
+          {{ tag }}
+        </span>
+      </div>
+    </div>
+
+    <!-- 文章內容 -->
+    <div class="blog-content-section">
+      <div class="content-wrapper">
+        <!-- 如果內容包含 HTML -->
+        <div 
+          class="blog-text" 
+          [innerHTML]="blog.content"> <!-- ✅ 移除 ? -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部操作區 -->
+    <div class="blog-footer">
+      <div class="footer-actions">
+        <button class="btn btn-secondary" (click)="goBack()">
+          返回列表
+        </button>
+        <button class="btn btn-primary" (click)="editBlog()">
+          編輯文章
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

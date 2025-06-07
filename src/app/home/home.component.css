@@ -1,0 +1,53 @@
+.logo {
+    height: 32px;
+}
+
+.main-page {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    --mdc-fab-container-color: #fff;
+}
+
+.user-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.mat-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    /* 確保導航列不被蓋住 */
+}
+
+.content {
+    flex: 1;
+    /* 讓 content 填滿剩餘高度 */
+    margin-top: 64px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    background-color: #f5f5f5;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: auto;
+}
+
+.i18n-selector {
+    max-width: 9rem;
+    height: 4rem;
+    --mat-form-field-state-layer-color: #0000;
+    margin-right: 8px;
+}

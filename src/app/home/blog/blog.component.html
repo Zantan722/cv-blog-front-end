@@ -1,0 +1,257 @@
+<div class="blog-query-container">
+  <!-- 頁面標題 -->
+  <div class="page-header">
+    <h1>Blog 查詢系統</h1>
+    <p>搜尋部落格文章</p>
+  </div>
+
+  <!-- 搜尋表單 -->
+  <div class="search-section">
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="search-form">
+      <div class="form-row">
+        <!-- ID 搜尋 -->
+        <div class="form-group">
+          <label for="id">文章 ID</label>
+          <input 
+            type="number" 
+            id="id" 
+            formControlName="id" 
+            placeholder="請輸入文章 ID"
+            class="form-control">
+        </div>
+
+        <!-- 標題搜尋 -->
+        <div class="form-group">
+          <label for="title">文章標題</label>
+          <input 
+            type="text" 
+            id="title" 
+            formControlName="title" 
+            placeholder="請輸入標題關鍵字"
+            class="form-control">
+        </div>
+
+        <!-- 建立者搜尋 -->
+        <div class="form-group">
+          <label for="author">建立者</label>
+          <input 
+            type="text" 
+            id="author" 
+            formControlName="author" 
+            placeholder="請輸入建立者姓名"
+            class="form-control">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- 開始日期 -->
+        <div class="form-group">
+          <label for="startDate">開始日期</label>
+          <input 
+            type="date" 
+            id="startDate" 
+            formControlName="startDate" 
+            class="form-control">
+        </div>
+
+        <!-- 結束日期 -->
+        <div class="form-group">
+          <label for="endDate">結束日期</label>
+          <input 
+            type="date" 
+            id="endDate" 
+            formControlName="endDate" 
+            class="form-control">
+        </div>
+
+        <!-- 按鈕組 -->
+        <div class="form-group button-group">
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            [disabled]="isLoading">
+            <span *ngIf="isLoading" class="loading-spinner"></span>
+            {{ isLoading ? '搜尋中...' : '搜尋' }}
+          </button>
+          
+          <button 
+            type="button" 
+            class="btn btn-secondary"
+            (click)="onReset()"
+            [disabled]="isLoading">
+            重置
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-outline"
+            (click)="onClear()"
+            [disabled]="isLoading">
+            清除
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- 搜尋結果統計 -->
+  <div class="result-summary">
+    <div class="summary-info">
+      <span class="result-count">
+        共找到 <strong>{{ totalItems }}</strong> 筆資料
+      </span>
+      <span *ngIf="hasSearchCriteria()" class="search-info">
+        (已套用搜尋條件)
+      </span>
+      <span class="display-range">
+        顯示第 {{ getDisplayRange() }} 筆，共 {{ totalItems }} 筆
+      </span>
+    </div>
+    
+    <!-- 每頁筆數選擇 -->
+    <div class="page-size-selector">
+      <label for="pageSize">每頁顯示：</label>
+      <select 
+        id="pageSize" 
+        [value]="pageSize" 
+        (change)="onPageSizeChange($event)"
+        class="page-size-select">
+        <option *ngFor="let size of pageSizeOptions" [value]="size">
+          {{ size }} 筆
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 結果表格 -->
+  <div class="table-section">
+    <div class="table-container">
+      <table class="blog-table">
+        <thead>
+          <tr>
+            <th class="col-id">ID</th>
+            <th class="col-title">Title</th>
+            <th class="col-creator">建立者</th>
+            <th class="col-time">建立時間</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 載入中狀態 -->
+          <tr *ngIf="isLoading" class="loading-row">
+            <td colspan="5" class="text-center">
+              <div class="loading-content">
+                <span class="loading-spinner"></span>
+                搜尋中，請稍候...
+              </div>
+            </td>
+          </tr>
+
+          <!-- 無資料狀態 -->
+          <tr *ngIf="!isLoading && paginatedBlogs.length === 0" class="no-data-row">
+            <td colspan="5" class="text-center">
+              <div class="no-data-content">
+                <p>📝 沒有找到符合條件的文章</p>
+                <button class="btn btn-link" (click)="onClear()">清除搜尋條件</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- 資料列 -->
+          <tr *ngFor="let blog of paginatedBlogs; trackBy: trackByBlogId" class="data-row" (click)="goToDetail(blog.id)">
+            <td class="col-id">{{ blog.id }}</td>
+            <td class="col-title">
+              <div class="title-content">
+                <span class="title-text">{{ blog.title }}</span>
+              </div>
+            </td>
+            <td class="col-creator">
+              <span class="creator-name">{{ blog.author }}</span>
+            </td>
+            <td class="col-time">
+              <span class="time-text">{{ formatDateTime(blog.createDate) }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 分頁控制 -->
+  <div class="pagination-section" *ngIf="!isLoading && totalItems > 0">
+    <div class="pagination-info">
+      <span>第 {{ currentPage }} 頁，共 {{ totalPages }} 頁</span>
+    </div>
+    
+    <div class="pagination-controls">
+      <!-- 第一頁按鈕 -->
+      <button 
+        class="pagination-btn" 
+        [class.disabled]="currentPage === 1"
+        (click)="goToPage(1)"
+        [disabled]="currentPage === 1"
+        title="第一頁">
+        ⟪
+      </button>
+      
+      <!-- 上一頁按鈕 -->
+      <button 
+        class="pagination-btn" 
+        [class.disabled]="currentPage === 1"
+        (click)="previousPage()"
+        [disabled]="currentPage === 1"
+        title="上一頁">
+        ⟨
+      </button>
+      
+      <!-- 頁碼按鈕 -->
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of getPageNumbers()" 
+          class="pagination-btn page-number"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+      </div>
+      
+      <!-- 下一頁按鈕 -->
+      <button 
+        class="pagination-btn" 
+        [class.disabled]="currentPage === totalPages"
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages"
+        title="下一頁">
+        ⟩
+      </button>
+      
+      <!-- 最後一頁按鈕 -->
+      <button 
+        class="pagination-btn" 
+        [class.disabled]="currentPage === totalPages"
+        (click)="goToPage(totalPages)"
+        [disabled]="currentPage === totalPages"
+        title="最後一頁">
+        ⟫
+      </button>
+    </div>
+
+    <!-- 跳頁輸入框 -->
+    <div class="page-jump">
+      <span>跳至第</span>
+      <input 
+        type="number" 
+        min="1" 
+        [max]="totalPages"
+        #pageInput
+        class="page-input"
+        (keyup.enter)="goToPage(+pageInput.value); pageInput.value = ''"
+        placeholder="頁">
+      <button 
+        class="btn-jump"
+        (click)="goToPage(+pageInput.value); pageInput.value = ''"
+        [disabled]="!pageInput.value">
+        跳頁
+      </button>
+    </div>
+  </div>
+</div>

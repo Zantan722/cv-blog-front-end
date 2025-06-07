@@ -5,17 +5,19 @@ import { LoginService } from './../service/login.service';
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ApiResponse } from '../models/api-response.model';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, CommonModule, HttpClientModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit {
 
   myForm: FormGroup;
+
 
   constructor(private fb: FormBuilder, private router: Router, private loginService: LoginService) {
     this.myForm = this.fb.group({
@@ -27,60 +29,30 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.myForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(10)]]
     });
 
   }
 
-  passwordValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value;
-
-    if (!value) {
-      return null; // 如果沒有值，讓 required 驗證器處理
-    }
-
-    // 檢查最少長度 10
-    if (value.length < 10) {
-      return { minLength: { required: 10, actual: value.length } };
-    }
-
-    // 檢查是否包含大寫字母
-    if (!/[A-Z]/.test(value)) {
-      return { missingUppercase: true };
-    }
-
-    // 檢查是否包含小寫字母
-    if (!/[a-z]/.test(value)) {
-      return { missingLowercase: true };
-    }
-
-    // 檢查是否包含數字
-    if (!/[0-9]/.test(value)) {
-      return { missingNumber: true };
-    }
-
-    return null; // 驗證通過
-  }
-
-  // ✅ 檢查密碼長度是否有效
+  // 檢查密碼長度是否有效
   isPasswordLengthValid(): boolean {
     const password = this.myForm.get('password')?.value;
     return password ? password.length >= 10 : false;
   }
 
-  // ✅ 檢查是否包含大寫字母
+  // 檢查是否包含大寫字母
   hasUppercase(): boolean {
     const password = this.myForm.get('password')?.value;
     return password ? /[A-Z]/.test(password) : false;
   }
 
-  // ✅ 檢查是否包含小寫字母
+  // 檢查是否包含小寫字母
   hasLowercase(): boolean {
     const password = this.myForm.get('password')?.value;
     return password ? /[a-z]/.test(password) : false;
   }
 
-  // ✅ 檢查是否包含數字
+  // 檢查是否包含數字
   hasNumber(): boolean {
     const password = this.myForm.get('password')?.value;
     return password ? /[0-9]/.test(password) : false;
@@ -89,49 +61,43 @@ export class LoginComponent implements OnInit {
   // 取得密碼錯誤訊息
   getPasswordErrorMessage(): string {
     const passwordControl = this.myForm.get('password');
-
     if (passwordControl?.hasError('required')) {
       return '請輸入密碼';
     }
 
-    if (passwordControl?.hasError('minLength')) {
+    if (!this.isPasswordLengthValid()) {
       return '密碼至少需要 10 個字符';
     }
 
-    if (passwordControl?.hasError('missingUppercase')) {
+    if (!this.hasUppercase()) {
+      console.log(123);
       return '密碼必須包含至少一個大寫字母';
     }
 
-    if (passwordControl?.hasError('missingLowercase')) {
+    if (!this.hasLowercase()) {
       return '密碼必須包含至少一個小寫字母';
     }
 
-    if (passwordControl?.hasError('missingNumber')) {
+    if (!this.hasNumber()) {
       return '密碼必須包含至少一個數字';
     }
 
     return '';
   }
 
-  // 🔍 檢查密碼是否有效
-  isPasswordValid(): boolean {
-    const passwordControl = this.myForm.get('password');
-    return passwordControl ? passwordControl.valid : false;
-  }
-
   // 🔍 檢查密碼是否被觸碰過且無效
   isPasswordInvalid(): boolean {
     const passwordControl = this.myForm.get('password');
-    return passwordControl ? passwordControl.invalid && passwordControl.touched : false;
+    const invalid = passwordControl ? passwordControl.touched && !(this.isPasswordLengthValid() && this.hasUppercase() && this.hasLowercase() && this.hasLowercase() && this.hasNumber())
+      : false;
+    return invalid;
   }
 
-  login1() {
-    const email = this.myForm.get('email')?.value;
-    const password = this.myForm.get('password')?.value;
-
-    console.log('Input 1:', email);
-    console.log('Input 2:', password);
-    // 處理這兩個值
+  isButtonDisabled(): boolean {
+    const eamilControl = this.myForm.get('email')
+    const emailInvalid = eamilControl?.invalid;
+    const passwordInvalid = this.isPasswordInvalid();
+    return emailInvalid || passwordInvalid;
   }
 
 
@@ -144,26 +110,77 @@ export class LoginComponent implements OnInit {
         password: this.myForm.get('password')?.value
       };
 
-      console.log('登入資料:', loginData);
+      console.log('🔑 發送登入請求:', loginData);
 
-      // 呼叫登入服務
       this.loginService.login(loginData).subscribe({
         next: (response) => {
-          console.log('登入成功:', response);
-          localStorage.setItem('jwt', response);
-          this.router.navigate(['']);
+          console.log('登入成功，收到回應:', response);
+
+          if (typeof response === 'string') {
+            // 如果是 token 字串
+            localStorage.setItem('jwt', response);
+            this.router.navigate(['blog']);
+          } else if (response && typeof response === 'object') {
+            // 如果是物件，可能包含 token 和 user 資訊
+            if ((response as any).token) {
+              localStorage.setItem('jwt', (response as any).token);
+            }
+            this.router.navigate(['blog']);
+          }
         },
         error: (error: HttpErrorResponse) => {
           console.error('登入失敗:', error);
-          const jsonData = JSON.parse(error.error);
-          alert(jsonData['message']);
+
+
+          try {
+            const errorData = error.error as ApiResponse;
+            if (errorData.message) {
+              alert(errorData.message);
+            } else {
+              alert('登入失敗，請檢查帳號密碼');
+            }
+          } catch (e) {
+            alert('登入失敗，請檢查帳號密碼');
+          }
+
         }
       });
     } else {
-      console.log('表單驗證失敗');
+      // 表單驗證失敗的處理
+      if (!this.myForm.get('email')?.valid) {
+        alert("請確認信箱資訊填入正確");
+      } else if (this.isPasswordInvalid()) {
+        alert(this.getPasswordErrorMessage());
+      } else {
+        alert("請確認資訊皆填入正確");
+      }
     }
   }
 
+  login1() {
+    this.myForm.markAllAsTouched();
 
+    if (this.myForm.valid) {
+      const loginData = {
+        email: this.myForm.get('email')?.value,
+        password: this.myForm.get('password')?.value
+      };
+
+      console.log('🔑 發送登入請求:', loginData);
+      console.log('🌐 請求 URL:', 'http://localhost:8080/common/login');
+
+      this.loginService.login(loginData).subscribe({
+        next: (response) => {
+          console.log('✅ 登入成功:', response);
+        },
+        error: (error) => {
+          console.error('❌ 登入失敗 - 完整錯誤:', error);
+          console.error('❌ 錯誤狀態:', error.status);
+          console.error('❌ 錯誤訊息:', error.message);
+          console.error('❌ 錯誤 URL:', error.url);
+        }
+      });
+    }
+  }
 
 }
