@@ -7,6 +7,7 @@ import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validatio
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '../models/api-response.model';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,7 @@ export class LoginComponent implements OnInit {
   myForm: FormGroup;
 
 
-  constructor(private fb: FormBuilder, private router: Router, private loginService: LoginService) {
+  constructor(private fb: FormBuilder, private router: Router, private loginService: LoginService, private authServive: AuthService) {
     this.myForm = this.fb.group({
       email: [''],
       password: ['']
@@ -115,18 +116,22 @@ export class LoginComponent implements OnInit {
       this.loginService.login(loginData).subscribe({
         next: (response) => {
           console.log('登入成功，收到回應:', response);
-
+          let jwt: string | null = null;
           if (typeof response === 'string') {
             // 如果是 token 字串
-            localStorage.setItem('jwt', response);
-            this.router.navigate(['blog']);
+            jwt = response;
           } else if (response && typeof response === 'object') {
             // 如果是物件，可能包含 token 和 user 資訊
             if ((response as any).token) {
-              localStorage.setItem('jwt', (response as any).token);
+              jwt = (response as any).token;
             }
-            this.router.navigate(['blog']);
+
           }
+          if (jwt != null) {
+            localStorage.setItem('jwt', jwt);
+            this.authServive.login(jwt);
+          }
+          this.router.navigate(['blog']);
         },
         error: (error: HttpErrorResponse) => {
           console.error('登入失敗:', error);
@@ -154,32 +159,6 @@ export class LoginComponent implements OnInit {
       } else {
         alert("請確認資訊皆填入正確");
       }
-    }
-  }
-
-  login1() {
-    this.myForm.markAllAsTouched();
-
-    if (this.myForm.valid) {
-      const loginData = {
-        email: this.myForm.get('email')?.value,
-        password: this.myForm.get('password')?.value
-      };
-
-      console.log('🔑 發送登入請求:', loginData);
-      console.log('🌐 請求 URL:', 'http://localhost:8080/common/login');
-
-      this.loginService.login(loginData).subscribe({
-        next: (response) => {
-          console.log('✅ 登入成功:', response);
-        },
-        error: (error) => {
-          console.error('❌ 登入失敗 - 完整錯誤:', error);
-          console.error('❌ 錯誤狀態:', error.status);
-          console.error('❌ 錯誤訊息:', error.message);
-          console.error('❌ 錯誤 URL:', error.url);
-        }
-      });
     }
   }
 

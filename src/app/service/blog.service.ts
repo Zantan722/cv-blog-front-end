@@ -51,7 +51,6 @@ export class BlogService {
 
 
   getBlogDetail(id: number): Observable<ApiResponse<BlogModel>> {
-    console.log(id);
     return this.http.get<ApiResponse<BlogModel>>(`/common/blog/${id}`);
   }
 

@@ -1,7 +1,6 @@
-import { routes } from '../../app.routes';
 import { SearchBlogModel } from '../../models/search-blog.model';
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BlogModel } from '../../models/blog.model';
 import { BlogService } from '../../service/blog.service';
@@ -174,8 +173,6 @@ export class BlogComponent implements OnInit {
     // const startIndex = (this.currentPage - 1) * this.pageSize;
     // const endIndex = startIndex + this.pageSize;
     this.paginatedBlogs = this.blogs;
-    console.log(1111);
-    console.log(this.paginatedBlogs);
   }
 
   // 改變頁面大小
@@ -277,8 +274,8 @@ export class BlogComponent implements OnInit {
     console.log('📖 前往部落格詳情頁:', blogId);
     console.log('🔍 Router 物件:', this.router); // ← 檢查 router 是否存在
 
-      this.router.navigate(['/blog', blogId]);
-    
+    this.router.navigate(['/blog', blogId]);
+
   }
 
 }

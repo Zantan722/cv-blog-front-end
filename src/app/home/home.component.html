@@ -1,16 +1,26 @@
 <div class="main-page">
     <mat-toolbar>
-        <button matIconButton class="example-icon" aria-label="Example icon-button with menu icon">
-            <mat-icon>menu</mat-icon>
+        <button matIconButton [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon>more_vert</mat-icon>
         </button>
-        <span>My App</span>
-        <span class="example-spacer"></span>
-        <button matIconButton class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-            <mat-icon>favorite</mat-icon>
-        </button>
-        <button matIconButton class="example-icon" aria-label="Example icon-button with share icon">
-            <mat-icon>share</mat-icon>
-        </button>
+        <mat-menu #menu="matMenu">
+            <button *ngIf="!islogin" class="no-data-row">
+                <mat-icon>dialpad</mat-icon>
+                <span>login</span>
+            </button>
+            <button mat-menu-item>
+                <mat-icon>dialpad</mat-icon>
+                <span>Redial</span>
+            </button>
+            <button mat-menu-item disabled>
+                <mat-icon>voicemail</mat-icon>
+                <span>Check voice mail</span>
+            </button>
+            <button mat-menu-item>
+                <mat-icon>notifications_off</mat-icon>
+                <span>Disable alerts</span>
+            </button>
+        </mat-menu>
     </mat-toolbar>
 
     <div class="content">
