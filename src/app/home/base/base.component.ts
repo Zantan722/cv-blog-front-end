@@ -123,6 +123,19 @@ export abstract class BaseComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
+  goToBlog(): void {
+    this.router.navigate(['/blog']);
+  }
+
+  goToUserBlog(): void {
+    this.router.navigate(['/blog/user']);
+  }
+
+  goToAdminBlog(): void {
+    this.router.navigate(['/blog/admin']);
+  }
+
+
   // ✅ 導航相關的共用方法
   navigateTo(path: string[]): void {
     this.router.navigate(path);

@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { BlogModel } from '../models/blog.model';
 import { Pageable } from '../models/api-page.model';
 import { UserRole } from '../enums/user-role.enum';
+import { CreateBlogModel, ModifyBlogModel } from '../models/modify-blog.model';
 
 @Injectable({
   providedIn: 'root'
@@ -44,10 +45,13 @@ export class BlogService {
     if (query.authorName != null) {
       params = params.set('authorName', query.authorName);
     }
+    if (query.containDeleted != null) {
+      params = params.set('containDeleted', query.containDeleted);
+    }
     console.log(params);
     let url = '/common/blog';
     if (UserRole.ADMIN == query.userRole) {
-      url = '/amin/blog';
+      url = '/admin/blog';
     } else if (UserRole.USER == query.userRole) {
       url = '/user/blog';
     }
@@ -61,4 +65,27 @@ export class BlogService {
     return this.http.get<ApiResponse<BlogModel>>(`/common/blog/${id}`);
   }
 
+
+  createBlog(blogData: CreateBlogModel): Observable<ApiResponse<BlogModel>> {
+    return this.http.post<ApiResponse<BlogModel>>(`/user/blog`, blogData);
+
+  }
+
+  updateBlog(isAdmin: boolean, blogData: ModifyBlogModel): Observable<ApiResponse<BlogModel>> {
+    console.log('📝 更新 Blog API 呼叫:', blogData.id, blogData);
+    let url = `/user/blog`;
+    if (isAdmin) {
+      url = `/admin/blog`;
+    }
+    return this.http.patch<ApiResponse<BlogModel>>(url, blogData);
+  }
+
+  deleteBlog(id: number, isAdmin: boolean): Observable<ApiResponse<boolean>> {
+    console.log('🗑️ 刪除 Blog API 呼叫:', id);
+    let url = `/user/blog/${id}`;
+    if (isAdmin) {
+      url = `/admin/blog/${id}`;
+    }
+    return this.http.delete<ApiResponse<boolean>>(url);
+  }
 }

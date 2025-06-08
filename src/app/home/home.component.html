@@ -26,6 +26,8 @@
             </ng-template>
         </div>
         <ng-container *ngIf="isServiceInitialized && isLoggedIn">
+            <span>歡迎, {{ userName }}</span>
+
             <button matIconButton [matMenuTriggerFor]="menu" aria-label="menu">
                 <mat-icon>more_vert</mat-icon>
             </button>
@@ -34,9 +36,13 @@
 
                 <!-- ✅ 已登入時的選項 -->
 
-                <button mat-menu-item>
+                <button mat-menu-item (click)="goToUserBlog()">
                     <mat-icon>settings</mat-icon>
-                    <span>管理個人文章</span>
+                    <span>個人文章管理</span>
+                </button>
+                <button *ngIf="isAdmin()" mat-menu-item (click)="goToAdminBlog()">
+                    <mat-icon>settings</mat-icon>
+                    <span>管理者文章管理</span>
                 </button>
                 <button mat-menu-item (click)="logout()">
                     <mat-icon>logout</mat-icon>

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserBlogComponent } from './user-blog.component';
+import { BlogModifyComponent } from './blog-modify.component';
 
-describe('UserBlogComponent', () => {
-  let component: UserBlogComponent;
-  let fixture: ComponentFixture<UserBlogComponent>;
+describe('BlogModifyComponent', () => {
+  let component: BlogModifyComponent;
+  let fixture: ComponentFixture<BlogModifyComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserBlogComponent]
+      imports: [BlogModifyComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(UserBlogComponent);
+    fixture = TestBed.createComponent(BlogModifyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

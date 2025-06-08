@@ -14,4 +14,5 @@ export interface SearchBlogModel {
     dateFrom?: number | null;
     dateTo?: number | null;
     userRole?: UserRole | null;
+    containDeleted?: boolean | null;
 }

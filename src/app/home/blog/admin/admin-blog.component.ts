@@ -1,6 +1,6 @@
 
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { BlogComponent } from '../blog.component';
@@ -17,16 +17,33 @@ import { UserRole } from '../../../enums/user-role.enum';
   templateUrl: './../blog.component.html',
   styleUrl: './../blog.component.css'
 })
-export class UserBlogComponent extends BlogComponent implements OnInit {
+export class AdminBlogComponent extends BlogComponent implements OnInit {
+
+  protected isBrowser: boolean;
+
+  constructor(
+    @Inject(PLATFORM_ID) protected platformId: Object
+  ) {
+    super();
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
+
 
   protected override isUserSearchPage: boolean = true;
-  protected override pageTile: string = '用戶管理Blog介面';
+  protected override pageTile: string = '管理者管理Blog介面';
+  protected override async onComponentInit(): Promise<void> {
+    if (this.isBrowser) {
+      this.updatePagination();
 
- protected override async onComponentInit(): Promise<void> {
-    this.updatePagination();
-    
-    if(!this.isLoggedIn){
-      this.goToLogin();
+      if (!this.isLoggedIn) {
+        this.notificationService.warning("請先登入");
+        this.goToLogin();
+        return;
+      }
+      if (!this.isAdmin()) {
+        this.notificationService.warning("使用者權限不足");
+        this.goToBlog();
+      }
     }
   }
 
@@ -46,13 +63,15 @@ export class UserBlogComponent extends BlogComponent implements OnInit {
       id: formValue.id,
       title: formValue.title,
       userId: this.getUserId(),
+      authorName: formValue.author,
       orderBy: BlogOrderBy.CREATED_DATE,
       sort: Sort.DESC,
       skip: (this.currentPage - 1) * this.pageSize,
       limit: this.pageSize,
       dateFrom: startDate,
       dateTo: endDate,
-      userRole: UserRole.USER
+      userRole: UserRole.ADMIN,
+      containDeleted: true
     };
     return criteria;
   }

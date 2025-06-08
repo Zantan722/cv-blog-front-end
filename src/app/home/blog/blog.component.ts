@@ -1,3 +1,4 @@
+import { NotificationService } from './../../service/notification.service';
 import { SearchBlogModel } from '../../models/search-blog.model';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
@@ -10,9 +11,8 @@ import { ApiResponse } from '../../models/api-response.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Pageable } from '../../models/api-page.model';
 import { finalize } from 'rxjs';
-import { Router } from '@angular/router';
 import { BaseComponent } from '../base/base.component';
-import { UserRole } from '../../enums/user-role.enum';
+import { getPublishStatusDisplayName } from '../../enums/publish-status.enum';
 
 // Blog 模型
 
@@ -23,6 +23,7 @@ import { UserRole } from '../../enums/user-role.enum';
   styleUrl: './blog.component.css'
 })
 export class BlogComponent extends BaseComponent implements OnInit {
+
 
   searchForm: FormGroup;
   blogs: BlogModel[] = [];
@@ -46,6 +47,7 @@ export class BlogComponent extends BaseComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private blogService = inject(BlogService);
+  protected notificationService = inject(NotificationService);
 
   constructor() {
     super();
@@ -60,7 +62,7 @@ export class BlogComponent extends BaseComponent implements OnInit {
 
   protected override async onComponentInit(): Promise<void> {
     this.updatePagination();
-    this.onSearch();
+    // this.onSearch();
   }
 
 
@@ -118,18 +120,18 @@ export class BlogComponent extends BaseComponent implements OnInit {
           }
         },
         error: (error: HttpErrorResponse) => {
-          console.error('登入失敗:', error);
+          console.error('查詢失敗:', error);
           try {
             const errorData = error.error as ApiResponse;
             if (errorData.message) {
-              alert(errorData.message);
+              this.notificationService.error(errorData.message);
             } else {
-              alert('登入失敗，請檢查帳號密碼');
+              this.notificationService.warning('查詢失敗,請確認是否登入');
             }
           } catch (e) {
-            alert('登入失敗，請檢查帳號密碼');
+            this.notificationService.error('查詢失敗');
+            this.router
           }
-
         }
       });
 
@@ -287,14 +289,21 @@ export class BlogComponent extends BaseComponent implements OnInit {
     return formValue.id || formValue.title || formValue.author || formValue.startDate || formValue.endDate;
   }
 
+  getStatusDisplayName(status: any): string {
+    return getPublishStatusDisplayName(status);
+  }
+
 
   // 轉向細節頁
   goToDetail(blogId: number): void {
-    console.log('📖 前往部落格詳情頁:', blogId);
-    console.log('🔍 Router 物件:', this.router); // ← 檢查 router 是否存在
-
     this.router.navigate(['/blog', blogId]);
-
   }
 
+  goToEdit(blogId: number): void {
+    this.router.navigate(['/blog/edit', blogId]);
+  }
+
+  goToCreate(): void {
+    this.router.navigate(['/blog/create']);
+  }
 }

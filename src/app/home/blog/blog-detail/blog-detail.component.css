@@ -84,6 +84,15 @@
   background-color: #545b62;
 }
 
+.btn-delete {
+  background-color: #a42323;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
 /* 部落格內容區 */
 .blog-content {
   background: white;
@@ -248,6 +257,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.right-actions {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
 }
 
 /* 響應式設計 */

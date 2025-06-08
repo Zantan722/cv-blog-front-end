@@ -454,6 +454,22 @@
   text-align: center;
 }
 
+/* 已刪除文字樣式 */
+.deleted-text {
+  text-decoration: line-through;
+  color: #6c757d !important;
+  opacity: 0.7;
+}
+
+.deleted-row {
+  background-color: #f8f9fa;
+  opacity: 0.8;
+}
+
+.deleted-row:hover {
+  background-color: #e9ecef !important;
+}
+
 .loading-content,
 .no-data-content {
   display: flex;

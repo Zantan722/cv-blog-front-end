@@ -1,0 +1,131 @@
+<!-- src/app/home/blog/blog-create/blog-create.component.html -->
+<div class="blog-create-container">
+  <!-- 頁面標題 -->
+  <div class="page-header">
+    <h1>{{pageTitle}}</h1>
+    <p>編輯您的部落格文章</p>
+  </div>
+
+  <!-- 建立表單 -->
+  <div class="form-section">
+    <form [formGroup]="createForm" (ngSubmit)="onSubmit()" class="blog-form">
+
+      <!-- 標題輸入 -->
+      <div class="form-group">
+        <label for="title" class="form-label required">文章標題</label>
+        <input type="text" id="title" formControlName="title" placeholder="請輸入文章標題" class="form-control"
+          [class.error]="isFieldInvalid('title')" maxlength="200">
+        <div class="field-info">
+          <span class="char-count">
+            {{ createForm.get('title')?.value?.length || 0 }}/200
+          </span>
+        </div>
+
+        <div *ngIf="isFieldInvalid('title')" class="error-message">
+          {{ getFieldError('title') }}
+        </div>
+      </div>
+
+      <!-- 內容輸入 -->
+      <div class="form-group">
+        <label for="content" class="form-label required">文章內容</label>
+        <textarea id="content" formControlName="content" placeholder="請輸入文章內容..." class="form-control content-textarea"
+          [class.error]="isFieldInvalid('content')" rows="15"></textarea>
+
+        <div class="field-info">
+          <span class="char-count">
+            {{ createForm.get('content')?.value?.length || 0 }} 字符
+          </span>
+        </div>
+
+        <div *ngIf="isFieldInvalid('content')" class="error-message">
+          {{ getFieldError('content') }}
+        </div>
+      </div>
+
+      <!-- 標籤輸入 -->
+      <div class="form-group">
+        <label for="tags" class="form-label">標籤</label>
+
+        <!-- 標籤輸入框 -->
+        <div class="tag-input-section">
+          <input type="text" id="tagInput" [(ngModel)]="tagInput" [ngModelOptions]="{standalone: true}"
+            placeholder="輸入標籤後按 Enter 或點擊新增" class="form-control tag-input" maxlength="20"
+            (keypress)="onTagKeyPress($event)">
+
+          <button type="button" class="btn btn-secondary add-tag-btn" (click)="addTag()" [disabled]="!tagInput.trim()">
+            新增
+          </button>
+        </div>
+
+        <!-- 已新增的標籤 -->
+        <div class="tags-display" *ngIf="tags.length > 0">
+          <span *ngFor="let tag of tags; let i = index" class="tag-item">
+            {{ tag }}
+            <button type="button" class="tag-remove-btn" (click)="removeTag(i)" title="移除標籤">
+              ×
+            </button>
+          </span>
+        </div>
+
+        <div class="field-info">
+          <span class="tag-count">{{ tags.length }}/10 個標籤</span>
+        </div>
+      </div>
+
+      <!-- 發布狀態 -->
+      <div class="form-group">
+        <label for="status" class="form-label required">發布狀態</label>
+        <select id="status" formControlName="status" class="form-control" [class.error]="isFieldInvalid('status')">
+          <option *ngFor="let option of statusOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+
+        <div class="field-help">
+          <small *ngIf="createForm.get('status')?.value === 'DRAFT'" class="status-help draft">
+            📝 草稿：文章將儲存但不會公開顯示
+          </small>
+          <small *ngIf="createForm.get('status')?.value === 'PUBLISHED'" class="status-help published">
+            🌍 發布：文章將立即公開，所有人都可以看到
+          </small>
+        </div>
+
+        <div *ngIf="isFieldInvalid('status')" class="error-message">
+          {{ getFieldError('status') }}
+        </div>
+      </div>
+
+      <!-- 按鈕區域 -->
+      <div class="form-actions">
+        <div class="action-left">
+          <button type="button" class="btn btn-secondary" (click)="goBack()" [disabled]="isSubmitting">
+            ← 返回列表
+          </button>
+        </div>
+
+        <div class="action-right">
+          <button type="button" class="btn btn-secondary" (click)="onReset()" [disabled]="isSubmitting">
+            🗑️ 清除
+          </button>
+
+          <button type="button" class="btn btn-primary" (click)="publish()"
+            [disabled]="isSubmitting || createForm.invalid">
+            <span *ngIf="isSubmitting && createForm.get('status')?.value === 'PUBLISHED'"
+              class="loading-spinner"></span>
+            🚀 發布文章
+          </button>
+        </div>
+      </div>
+
+      <!-- 表單狀態提示 -->
+      <div class="form-status" *ngIf="isSubmitting">
+        <div class="submitting-message">
+          <span class="loading-spinner"></span>
+          <span *ngIf="createForm.get('status')?.value === 'DRAFT'">正在儲存草稿...</span>
+          <span *ngIf="createForm.get('status')?.value === 'PUBLISHED'">正在發布文章...</span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

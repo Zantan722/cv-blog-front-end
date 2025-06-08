@@ -19,6 +19,7 @@ export const routes: Routes = [
     },
     // 為了向後兼容，保留直接的 blog 路由但重定向到 home/blog
     { path: 'blog', redirectTo: '/home/blog', pathMatch: 'full' },
+    { path: 'blog/edit/:id', redirectTo: '/home/blog/edit/:id', pathMatch: 'full' },
     { path: 'blog/:id', redirectTo: '/home/blog/:id' },
-    { path: '**', redirectTo: '/home' }
+    // { path: '**', redirectTo: '/home' }
 ];

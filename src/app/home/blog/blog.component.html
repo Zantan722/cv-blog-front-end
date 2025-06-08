@@ -22,7 +22,7 @@
         </div>
 
         <!-- 建立者搜尋 -->
-        <div *ngIf="!isUserSearchPage && !isAdmin()" class="form-group">
+        <div *ngIf="!isUserSearchPage || isAdmin()" class="form-group">
           <label for="author">建立者</label>
           <input type="text" id="author" formControlName="author" placeholder="請輸入建立者姓名" class="form-control">
         </div>
@@ -65,9 +65,9 @@
   <!-- 搜尋結果統計 -->
   <div class="result-summary">
     <div>
-      <button *ngIf="isLoggedIn" type="button" class="btn btn-create-article" (click)="onClear()"
+      <button *ngIf="isLoggedIn" type="button" class="btn btn-create-article" (click)="goToCreate()"
         [disabled]="isLoading">
-        建立文章
+        建立新文章
       </button>
     </div>
     <div class="summary-info">
@@ -103,7 +103,7 @@
             <th class="col-title">Title</th>
             <th class="col-creator">建立者</th>
             <th class="col-time">建立時間</th>
-            <th *ngIf="isLoggedIn && (isUserSearchPage || isAdmin())"class="col-actions">發布狀態</th>
+            <th *ngIf="isLoggedIn && (isUserSearchPage || isAdmin())" class="col-actions">發布狀態</th>
             <th *ngIf="isLoggedIn && (isUserSearchPage || isAdmin())" class="col-actions">操作</th>
           </tr>
         </thead>
@@ -130,26 +130,27 @@
 
           <!-- 資料列 -->
           <tr *ngFor="let blog of paginatedBlogs; trackBy: trackByBlogId" class="data-row"
-            (click)="goToDetail(blog.id)">
+            [class.deleted-row]="blog.deleted" (click)="goToDetail(blog.id)">
             <td class="col-id">{{ blog.id }}</td>
             <td class="col-title">
               <div class="title-content">
-                <span class="title-text">{{ blog.title }}</span>
+                <span class="title-text" [class.deleted-text]="blog.deleted">{{ blog.title }}</span>
               </div>
             </td>
             <td class="col-creator">
-              <span class="creator-name">{{ blog.author }}</span>
+              <span class="creator-name" [class.deleted-text]="blog.deleted">{{ blog.author }}</span>
             </td>
             <td class="col-time">
-              <span class="time-text">{{ formatDateTime(blog.createDate) }}</span>
+              <span class="time-text" [class.deleted-text]="blog.deleted">{{ formatDateTime(blog.createDate) }}</span>
             </td>
-            <td *ngIf="isLoggedIn && (isUserSearchPage || isAdmin())" class="col-actions">
+            <td *ngIf="isLoggedIn && (isUserSearchPage || isAdmin())" class="col-creator">
+              <span class="creator-name" [class.deleted-text]="blog.deleted">{{ getStatusDisplayName(blog.status)
+                }}</span>
+            </td>
+            <td *ngIf="isLoggedIn && (isUserSearchPage || isAdmin()) && !blog.deleted" class="col-actions">
               <div class="action-buttons">
-                <button class="btn-action btn-edit" title="編輯">
+                <button class="btn-action btn-edit" title="編輯" (click)="goToEdit(blog.id)">
                   ✏️
-                </button>
-                <button class="btn-action btn-delete" title="刪除">
-                  🗑️
                 </button>
               </div>
             </td>

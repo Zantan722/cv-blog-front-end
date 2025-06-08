@@ -54,7 +54,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           } else {
             console.log('❌ 業務邏輯失敗:', responseBody.message);
             if (responseBody.message) {
-              alert(responseBody.message);
+              throw new Error(responseBody.message);
             }
             return event.clone({ body: false });
           }
@@ -75,12 +75,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             router.navigate(['/login']);
             break;
           case 403:
-            console.log('🚫 權限不足');
-            alert('權限不足: ' + error.message);
+            console.log('🚫 權限不足' + error.message);
+            window.alert('權限不足');
+            break;
+          case undefined:
+            window.alert(error.message);
             break;
           default:
             console.log('🔥 系統錯誤');
-            alert("系統忙碌中，請稍後再試，若持續發生，請聯繫相關人員");
+            window.alert("系統忙碌中，請稍後再試，若持續發生，請聯繫相關人員");
         }
       }
       return throwError(() => error);
