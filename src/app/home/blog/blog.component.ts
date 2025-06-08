@@ -1,6 +1,6 @@
 import { SearchBlogModel } from '../../models/search-blog.model';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BlogModel } from '../../models/blog.model';
 import { BlogService } from '../../service/blog.service';
@@ -11,6 +11,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Pageable } from '../../models/api-page.model';
 import { finalize } from 'rxjs';
 import { Router } from '@angular/router';
+import { BaseComponent } from '../base/base.component';
+import { UserRole } from '../../enums/user-role.enum';
 
 // Blog 模型
 
@@ -20,12 +22,17 @@ import { Router } from '@angular/router';
   templateUrl: './blog.component.html',
   styleUrl: './blog.component.css'
 })
-export class BlogComponent implements OnInit {
+export class BlogComponent extends BaseComponent implements OnInit {
 
   searchForm: FormGroup;
   blogs: BlogModel[] = [];
   paginatedBlogs: BlogModel[] = [];
   isLoading = false;
+
+
+  // 頁面判斷
+  protected isUserSearchPage = false;
+  protected pageTile = 'Blog 查詢系統';
 
   // 分頁相關屬性
   currentPage = 1;
@@ -37,18 +44,23 @@ export class BlogComponent implements OnInit {
   // TrackBy 函數
   trackByBlogId = (index: number, blog: BlogModel) => blog.id;
 
-  constructor(private fb: FormBuilder, private blogService: BlogService, private router: Router) {
+  private fb = inject(FormBuilder);
+  private blogService = inject(BlogService);
+
+  constructor() {
+    super();
     this.searchForm = this.fb.group({
       id: [''],
-      title: ['',],
+      title: [''],
       author: ['', [Validators.minLength(2)]],
       startDate: [''],
       endDate: ['']
     });
   }
 
-  ngOnInit(): void {
+  protected override async onComponentInit(): Promise<void> {
     this.updatePagination();
+    this.onSearch();
   }
 
 
@@ -56,29 +68,9 @@ export class BlogComponent implements OnInit {
   onSearch(): void {
     this.isLoading = true;
     const formValue = this.searchForm.value;
-    let startDate: number | null = null;
-    let endDate: number | null = null;
-    console.log("表單資料:" + formValue.startDate)
-    if (formValue.startDate != null && formValue.startDate != '') {
-      startDate = new Date(formValue.startDate).getTime();
-    }
-    if (formValue.endDate != null && formValue.endDate != '') {
-      let date = new Date(formValue.endDate);
-      date.setDate(date.getDate() + 1);
-      endDate = date.getTime();
-    }
 
-    const criteria: SearchBlogModel = {
-      id: formValue.id,
-      title: formValue.title,
-      authorName: formValue.author,
-      orderBy: BlogOrderBy.CREATED_DATE,
-      sort: Sort.DESC,
-      skip: (this.currentPage - 1) * this.pageSize,
-      limit: this.pageSize,
-      dateFrom: startDate,
-      dateTo: endDate
-    };
+
+    const criteria = this.generateCriteria(formValue);
     this.blogService.searchBlog(criteria)
       .pipe(
         finalize(() => {
@@ -112,6 +104,7 @@ export class BlogComponent implements OnInit {
 
               if (pageData && pageData.list) {
                 this.blogs = pageData?.list || [];
+                this.totalItems = pageData.total;
               } else {
                 console.error('❌ 分頁資料格式不正確');
                 this.blogs = [];
@@ -141,6 +134,32 @@ export class BlogComponent implements OnInit {
       });
 
 
+  }
+
+  protected generateCriteria(formValue: any) {
+    let startDate: number | null = null;
+    let endDate: number | null = null;
+    console.log("表單資料:" + formValue.startDate)
+    if (formValue.startDate != null && formValue.startDate != '') {
+      startDate = new Date(formValue.startDate).getTime();
+    }
+    if (formValue.endDate != null && formValue.endDate != '') {
+      let date = new Date(formValue.endDate);
+      date.setDate(date.getDate() + 1);
+      endDate = date.getTime();
+    }
+    const criteria: SearchBlogModel = {
+      id: formValue.id,
+      title: formValue.title,
+      authorName: formValue.author,
+      orderBy: BlogOrderBy.CREATED_DATE,
+      sort: Sort.DESC,
+      skip: (this.currentPage - 1) * this.pageSize,
+      limit: this.pageSize,
+      dateFrom: startDate,
+      dateTo: endDate
+    };
+    return criteria;
   }
 
   // 重置搜尋

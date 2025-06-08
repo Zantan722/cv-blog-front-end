@@ -1,26 +1,51 @@
 <div class="main-page">
     <mat-toolbar>
-        <button matIconButton [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-            <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-            <button *ngIf="!islogin" class="no-data-row">
-                <mat-icon>dialpad</mat-icon>
-                <span>login</span>
+
+
+        <span class="toolbar-spacer"></span>
+
+        <!-- ✅ 顯示載入狀態 -->
+        <div *ngIf="!isServiceInitialized" class="loading-info">
+            <span>載入中...</span>
+        </div>
+
+        <!-- ✅ 已初始化後顯示登入狀態 -->
+        <div *ngIf="isServiceInitialized && !isLoggedIn">
+            <div *ngIf="isLoggedIn; else loginPrompt" class="user-info">
+                <span><mat-icon>login</mat-icon>歡迎, {{ userName }}</span>
+                <button mat-icon-button (click)="logout()" matTooltip="登出">
+                    <mat-icon>logout</mat-icon>
+                </button>
+            </div>
+
+            <ng-template #loginPrompt>
+                <button mat-button (click)="goToLogin()">
+                    <mat-icon>person</mat-icon>
+                    登入
+                </button>
+            </ng-template>
+        </div>
+        <ng-container *ngIf="isServiceInitialized && isLoggedIn">
+            <button matIconButton [matMenuTriggerFor]="menu" aria-label="menu">
+                <mat-icon>more_vert</mat-icon>
             </button>
-            <button mat-menu-item>
-                <mat-icon>dialpad</mat-icon>
-                <span>Redial</span>
-            </button>
-            <button mat-menu-item disabled>
-                <mat-icon>voicemail</mat-icon>
-                <span>Check voice mail</span>
-            </button>
-            <button mat-menu-item>
-                <mat-icon>notifications_off</mat-icon>
-                <span>Disable alerts</span>
-            </button>
-        </mat-menu>
+
+            <mat-menu #menu="matMenu">
+
+                <!-- ✅ 已登入時的選項 -->
+
+                <button mat-menu-item>
+                    <mat-icon>settings</mat-icon>
+                    <span>管理個人文章</span>
+                </button>
+                <button mat-menu-item (click)="logout()">
+                    <mat-icon>logout</mat-icon>
+                    <span>登出</span>
+                </button>
+
+
+            </mat-menu>
+        </ng-container>
     </mat-toolbar>
 
     <div class="content">

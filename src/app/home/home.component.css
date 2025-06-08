@@ -24,6 +24,7 @@
     left: 0;
     width: 100%;
     z-index: 1000;
+    justify-content: flex-end;
     /* 確保導航列不被蓋住 */
 }
 

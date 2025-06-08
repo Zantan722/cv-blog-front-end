@@ -225,6 +225,17 @@
   transform: translateY(-2px);
 }
 
+.btn-create-article {
+  background-color: #228d56;
+  color: white;
+}
+
+.btn-create-article:hover:not(:disabled) {
+  background-color: #d7dce2;
+  color: white;
+  transform: translateY(-2px);
+}
+
 /* 載入動畫 */
 .loading-spinner {
   width: 16px;

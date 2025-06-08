@@ -5,6 +5,7 @@ import { ApiResponse } from '../models/api-response.model';
 import { Observable } from 'rxjs';
 import { BlogModel } from '../models/blog.model';
 import { Pageable } from '../models/api-page.model';
+import { UserRole } from '../enums/user-role.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +45,13 @@ export class BlogService {
       params = params.set('authorName', query.authorName);
     }
     console.log(params);
-    return this.http.get<ApiResponse<Pageable<BlogModel>>>(`/common/blog`, {
+    let url = '/common/blog';
+    if (UserRole.ADMIN == query.userRole) {
+      url = '/amin/blog';
+    } else if (UserRole.USER == query.userRole) {
+      url = '/user/blog';
+    }
+    return this.http.get<ApiResponse<Pageable<BlogModel>>>(url, {
       params: params
     });
   }
