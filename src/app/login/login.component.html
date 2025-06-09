@@ -1,33 +1,135 @@
-<div style="display: flex;align-items: center;justify-content: center;width: 100vw;height: 100vh;">
-<form [formGroup]="myForm" (ngSubmit)="login()" style="width: 300px; height: 300px;">
-    <!-- Email 輸入 -->
-    <div class="form-group">
-        <label for="email">電子郵件</label>
-        <input type="email" id="email" formControlName="email" />
-        <div *ngIf="myForm.get('email')?.invalid && myForm.get('email')?.touched" class="error-message">
-            <span *ngIf="myForm.get('email')?.hasError('required')">請輸入電子郵件</span>
-            <span *ngIf="myForm.get('email')?.hasError('email')">請輸入有效的電子郵件格式</span>
-        </div>
+<!-- src/app/login/login.component.html -->
+<div class="login-container">
+  <div class="login-card">
+    <!-- 登入標題區 -->
+    <div class="login-header">
+      <div class="logo-section">
+        <div class="logo-icon">🔐</div>
+        <h2>歡迎回來</h2>
+        <p>請登入您的帳戶以繼續</p>
+      </div>
     </div>
 
-    <!-- Password 輸入 -->
-    <div class="form-group">
-        <label for="password">密碼</label>
-        <input type="password" id="password" formControlName="password" />
+    <!-- 登入表單 -->
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form" novalidate>
+      
+      <!-- Email 輸入區 -->
+      <div class="form-group">
+        <label for="email" class="form-label">
+          <span class="label-icon">📧</span>
+          電子郵件
+        </label>
+        <div class="input-wrapper">
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email"
+            class="form-input"
+            [class.error]="isEmailInvalid()"
+            placeholder="請輸入您的電子郵件"
+            autocomplete="email">
+          <div class="input-icon">
+            <span *ngIf="loginForm.get('email')?.valid && loginForm.get('email')?.value" class="success-icon">✓</span>
+          </div>
+        </div>
+        
+        <!-- Email 錯誤訊息 -->
+        <div *ngIf="isEmailInvalid()" class="error-message">
+          <span *ngIf="loginForm.get('email')?.hasError('required')">請輸入電子郵件</span>
+          <span *ngIf="loginForm.get('email')?.hasError('email')">請輸入有效的電子郵件格式</span>
+        </div>
+      </div>
+
+      <!-- Password 輸入區 -->
+      <div class="form-group">
+        <label for="password" class="form-label">
+          <span class="label-icon">🔒</span>
+          密碼
+        </label>
+        <div class="input-wrapper">
+          <input 
+            [type]="showPassword ? 'text' : 'password'"
+            id="password" 
+            formControlName="password"
+            class="form-input"
+            [class.error]="isPasswordInvalid()"
+            placeholder="請輸入密碼"
+            autocomplete="current-password">
+          <div class="input-icon">
+            <button 
+              type="button" 
+              class="toggle-password-btn"
+              (click)="togglePasswordVisibility()"
+              [title]="showPassword ? '隱藏密碼' : '顯示密碼'">
+              <span *ngIf="!showPassword">👁️</span>
+              <span *ngIf="showPassword">🙈</span>
+            </button>
+          </div>
+        </div>
 
         <!-- 密碼要求說明 -->
-        <div class="password-requirements">
+        <div class="password-requirements" *ngIf="loginForm.get('password')?.value">
+          <div class="requirements-header">
             <small>密碼要求：</small>
-            <ul>
-                <li [class.valid]="isPasswordLengthValid()">至少 10 個字符</li>
-                <li [class.valid]="hasUppercase()">包含大寫字母</li>
-                <li [class.valid]="hasLowercase()">包含小寫字母</li>
-                <li [class.valid]="hasNumber()">包含數字</li>
-            </ul>
+          </div>
+          <ul class="requirements-list">
+            <li [class.valid]="isPasswordLengthValid()">
+              <span class="requirement-icon"></span>
+              至少 10 個字符
+            </li>
+            <li [class.valid]="hasUppercase()">
+              <span class="requirement-icon"></span>
+              包含大寫字母
+            </li>
+            <li [class.valid]="hasLowercase()">
+              <span class="requirement-icon"></span>
+              包含小寫字母
+            </li>
+            <li [class.valid]="hasNumber()">
+              <span class="requirement-icon"></span>
+              包含數字
+            </li>
+          </ul>
         </div>
-    </div>
 
-    <!-- 提交按鈕 -->
-    <button id="button" [disabled]="isButtonDisabled()" type="submit">登入</button>
-</form>
+        <!-- Password 錯誤訊息 -->
+        <div *ngIf="isPasswordInvalid() && !loginForm.get('password')?.value" class="error-message">
+          請輸入密碼
+        </div>
+      </div>
+      <!-- 登入按鈕 -->
+      <button 
+        type="submit" 
+        class="login-btn"
+        [disabled]="isButtonDisabled()">
+        <span *ngIf="isSubmitting" class="btn-spinner"></span>
+        <span class="btn-text">
+          {{ isSubmitting ? '登入中...' : '登入' }}
+        </span>
+      </button>
+
+      <!-- 分隔線 -->
+      <div class="divider">
+        <span>或</span>
+      </div>
+
+      <!-- 註冊連結 -->
+      <div class="register-section">
+        <p class="register-text">還沒有帳戶？</p>
+        <button 
+          type="button" 
+          class="register-btn"
+          (click)="goToRegister()">
+          立即註冊
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 背景裝飾 -->
+  <div class="bg-decoration">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
+  </div>
 </div>

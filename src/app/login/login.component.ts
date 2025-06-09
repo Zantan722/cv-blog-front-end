@@ -1,66 +1,94 @@
 import { CommonModule } from '@angular/common';
 import { LoginModel } from './../models/login.model';
 import { LoginService } from './../service/login.service';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ApiResponse } from '../models/api-response.model';
-import { AuthService } from '../service/auth.service';
+import { BaseComponent } from '../home/base/base.component';
 
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent extends BaseComponent implements OnInit {
 
-  myForm: FormGroup;
+  loginForm: FormGroup;
+  isSubmitting = false;
+  showPassword = false;
 
 
-  constructor(private fb: FormBuilder, private router: Router, private loginService: LoginService, private authServive: AuthService) {
-    this.myForm = this.fb.group({
-      email: [''],
-      password: ['']
-    });
-  }
-
-  ngOnInit(): void {
-    this.myForm = this.fb.group({
+  constructor(
+    private fb: FormBuilder,
+    private loginService: LoginService,
+    private cdr: ChangeDetectorRef) {
+    super();
+    this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(10)]]
     });
+  }
 
+  protected override async onComponentInit(): Promise<void> {
+    
+
+    this.loginForm.valueChanges.subscribe(() => {
+      this.cdr.markForCheck();
+    });
+    // ✅ 監聽表單變化
+    this.loginForm.valueChanges.subscribe(() => {
+      this.cdr.markForCheck();
+    });
+
+    // 監聽個別欄位狀態變化
+    this.loginForm.get('email')?.statusChanges.subscribe(() => {
+      this.cdr.markForCheck();
+    });
+
+    this.loginForm.get('password')?.statusChanges.subscribe(() => {
+      this.cdr.markForCheck();
+    });
+  }
+
+  setIsSubmit(submit: boolean) {
+    this.isSubmitting = submit;
+    this.cdr.markForCheck();
+  }
+
+  setShowPassword(show: boolean) {
+    this.showPassword = show;
+    this.cdr.markForCheck();
   }
 
   // 檢查密碼長度是否有效
   isPasswordLengthValid(): boolean {
-    const password = this.myForm.get('password')?.value;
+    const password = this.loginForm.get('password')?.value;
     return password ? password.length >= 10 : false;
   }
 
   // 檢查是否包含大寫字母
   hasUppercase(): boolean {
-    const password = this.myForm.get('password')?.value;
+    const password = this.loginForm.get('password')?.value;
     return password ? /[A-Z]/.test(password) : false;
   }
 
   // 檢查是否包含小寫字母
   hasLowercase(): boolean {
-    const password = this.myForm.get('password')?.value;
+    const password = this.loginForm.get('password')?.value;
     return password ? /[a-z]/.test(password) : false;
   }
 
   // 檢查是否包含數字
   hasNumber(): boolean {
-    const password = this.myForm.get('password')?.value;
+    const password = this.loginForm.get('password')?.value;
     return password ? /[0-9]/.test(password) : false;
   }
 
   // 取得密碼錯誤訊息
   getPasswordErrorMessage(): string {
-    const passwordControl = this.myForm.get('password');
+    const passwordControl = this.loginForm.get('password');
     if (passwordControl?.hasError('required')) {
       return '請輸入密碼';
     }
@@ -85,29 +113,42 @@ export class LoginComponent implements OnInit {
     return '';
   }
 
+  isEmailInvalid(): boolean {
+    const emailControl = this.loginForm.get('email');
+    return emailControl ?
+      emailControl.touched && emailControl.invalid : false;
+  }
+
   // 🔍 檢查密碼是否被觸碰過且無效
   isPasswordInvalid(): boolean {
-    const passwordControl = this.myForm.get('password');
+    const passwordControl = this.loginForm.get('password');
     const invalid = passwordControl ? passwordControl.touched && !(this.isPasswordLengthValid() && this.hasUppercase() && this.hasLowercase() && this.hasLowercase() && this.hasNumber())
       : false;
     return invalid;
   }
 
   isButtonDisabled(): boolean {
-    const eamilControl = this.myForm.get('email')
+    const eamilControl = this.loginForm.get('email')
     const emailInvalid = eamilControl?.invalid;
     const passwordInvalid = this.isPasswordInvalid();
-    return emailInvalid || passwordInvalid;
+
+    return emailInvalid || passwordInvalid || this.loginForm.invalid || this.isSubmitting;;
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+    this.cdr.markForCheck();
   }
 
 
   login() {
-    this.myForm.markAllAsTouched();
+    this.loginForm.markAllAsTouched();
+    this.cdr.markForCheck();
 
-    if (this.myForm.valid) {
+    if (this.loginForm.valid) {
       const loginData: LoginModel = {
-        email: this.myForm.get('email')?.value,
-        password: this.myForm.get('password')?.value
+        email: this.loginForm.get('email')?.value,
+        password: this.loginForm.get('password')?.value
       };
 
       console.log('🔑 發送登入請求:', loginData);
@@ -128,7 +169,7 @@ export class LoginComponent implements OnInit {
           }
           if (jwt != null) {
             localStorage.setItem('jwt', jwt);
-            this.authServive.login(jwt);
+            this.authService.login(jwt);
           }
           this.router.navigate(['blog']);
         },
@@ -137,10 +178,9 @@ export class LoginComponent implements OnInit {
 
 
           try {
-            const errorData = error.error as ApiResponse;
-            if (errorData.message) {
-              alert(errorData.message);
-            } else {
+            const errorData = error;
+
+            if (typeof error != 'boolean' && typeof error === 'object' && !errorData.message) {
               alert('登入失敗，請檢查帳號密碼');
             }
           } catch (e) {
@@ -151,7 +191,7 @@ export class LoginComponent implements OnInit {
       });
     } else {
       // 表單驗證失敗的處理
-      if (!this.myForm.get('email')?.valid) {
+      if (!this.loginForm.get('email')?.valid) {
         alert("請確認信箱資訊填入正確");
       } else if (this.isPasswordInvalid()) {
         alert(this.getPasswordErrorMessage());
@@ -159,6 +199,10 @@ export class LoginComponent implements OnInit {
         alert("請確認資訊皆填入正確");
       }
     }
+  }
+
+  goToRegister(): void {
+    this.router.navigate(['/register']);
   }
 
 }

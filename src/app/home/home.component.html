@@ -14,25 +14,20 @@
 
         <!-- ✅ 已初始化後顯示登入狀態 -->
         <div *ngIf="isServiceInitialized && !isLoggedIn">
-            <div *ngIf="isLoggedIn; else loginPrompt" class="user-info">
-                <span><mat-icon>login</mat-icon>歡迎, {{ userName }}</span>
-                <button mat-icon-button (click)="logout()" matTooltip="登出">
-                    <mat-icon>logout</mat-icon>
-                </button>
-            </div>
+            <button mat-button (click)="goToLogin()">
+                <mat-icon>person</mat-icon>
+                登入
+            </button>
 
-            <ng-template #loginPrompt>
-                <button mat-button (click)="goToLogin()">
-                    <mat-icon>person</mat-icon>
-                    登入
-                </button>
-            </ng-template>
         </div>
         <ng-container *ngIf="isServiceInitialized && isLoggedIn">
-            <span>歡迎, {{ userName }}</span>
+            <div class="user-welcome">
+                <span>歡迎, {{ userName }}</span>
+            </div>
 
-            <button matIconButton [matMenuTriggerFor]="menu" aria-label="menu">
-                <mat-icon>more_vert</mat-icon>
+
+            <button matMiniFab [matMenuTriggerFor]="menu" aria-label="menu">
+                <mat-icon>menu</mat-icon>
             </button>
 
             <mat-menu #menu="matMenu">

@@ -1,53 +1,714 @@
-.password-requirements {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #666;
+/* src/app/login/login.component.css */
+
+/* 主容器 */
+.login-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-.password-requirements ul {
-  margin: 4px 0;
-  padding-left: 16px;
+/* 登入卡片 */
+.login-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 10px 30px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  padding: 40px;
+  width: 100%;
+  max-width: 450px;
+  animation: slideUpFadeIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 10;
+}
+
+@keyframes slideUpFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 登入標題區 */
+.login-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.logo-section {
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.logo-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.login-header h2 {
+  color: #2c3e50;
+  margin: 0 0 10px 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.login-header p {
+  color: #6c757d;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+/* 表單樣式 */
+.login-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.95rem;
+  gap: 8px;
+}
+
+.label-icon {
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: 16px 50px 16px 18px;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  background: rgba(248, 249, 250, 0.8);
+  font-family: inherit;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 
+    0 0 0 0.2rem rgba(102, 126, 234, 0.15),
+    0 4px 12px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-input:hover:not(:focus) {
+  border-color: #ced4da;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.form-input.error {
+  border-color: #ef4444;
+  background: rgba(254, 242, 242, 0.8);
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.form-input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 
+    0 0 0 0.2rem rgba(239, 68, 68, 0.15),
+    0 4px 12px rgba(239, 68, 68, 0.1);
+}
+
+.input-icon {
+  position: absolute;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.input-icon > * {
+  pointer-events: auto;
+}
+
+.success-icon {
+  color: #10b981;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.toggle-password-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-size: 1.1rem;
+}
+
+.toggle-password-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* 密碼要求樣式 */
+.password-requirements {
+  margin-top: 12px;
+  padding: 15px;
+  background: rgba(248, 249, 250, 0.8);
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+  animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.requirements-header small {
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.requirements-list {
+  margin: 8px 0 0 0;
+  padding: 0;
   list-style: none;
 }
 
-.password-requirements li {
+.requirements-list li {
   color: #ef4444;
-  transition: color 0.2s ease;
+  transition: all 0.3s ease;
   position: relative;
-  padding-left: 20px;
+  padding-left: 25px;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
 }
 
-.password-requirements li::before {
+.requirement-icon::before {
   content: "✗";
   position: absolute;
-  left: 0;
+  left: -25px;
   color: #ef4444;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
 }
 
-.password-requirements li.valid {
+.requirements-list li.valid {
   color: #10b981;
 }
 
-.password-requirements li.valid::before {
+.requirements-list li.valid .requirement-icon::before {
   content: "✓";
   color: #10b981;
 }
 
+/* 錯誤訊息 */
 .error-message {
   color: #ef4444;
-  font-size: 14px;
-  margin-top: 4px;
+  font-size: 0.875rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  animation: fadeInUp 0.3s ease;
 }
 
-.form-group input.error {
-  border-color: #ef4444;
+.error-message::before {
+  content: "⚠";
+  margin-right: 6px;
+  font-size: 1rem;
 }
 
-.form-group {
-  margin-bottom: 20px;
+/* 表單選項 */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 25px 0;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
-button[disabled] {
-  opacity: 0.6;
+.remember-me-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #495057;
+  user-select: none;
+}
+
+.remember-checkbox {
+  display: none;
+}
+
+.checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #e9ecef;
+  border-radius: 4px;
+  margin-right: 8px;
+  position: relative;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.remember-checkbox:checked + .checkbox-custom {
+  background: #667eea;
+  border-color: #667eea;
+}
+
+.remember-checkbox:checked + .checkbox-custom::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.forgot-password-btn {
+  background: none;
+  border: none;
+  color: #667eea;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 4px 0;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.forgot-password-btn:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* 登入按鈕 */
+.login-btn {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.login-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.login-btn:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.login-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(102, 126, 234, 0.3),
+    0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.login-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-btn:disabled {
+  opacity: 0.7;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 分隔線 */
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 30px 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #e9ecef, transparent);
+}
+
+.divider span {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* 註冊區域 */
+.register-section {
+  text-align: center;
+}
+
+.register-text {
+  margin: 0 0 15px 0;
+  color: #6c757d;
+  font-size: 0.95rem;
+}
+
+.register-btn {
+  background: none;
+  border: 2px solid #667eea;
+  color: #667eea;
+  padding: 12px 30px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.register-btn:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* 背景裝飾 */
+.bg-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  animation: float 6s ease-in-out infinite;
+}
+
+.bg-circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -150px;
+  right: -150px;
+  animation-delay: 0s;
+}
+
+.bg-circle-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -100px;
+  left: -100px;
+  animation-delay: 2s;
+}
+
+.bg-circle-3 {
+  width: 150px;
+  height: 150px;
+  top: 50%;
+  right: -75px;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.2;
+  }
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 15px;
+  }
+  
+  .login-card {
+    padding: 30px 25px;
+    max-width: 100%;
+    border-radius: 16px;
+  }
+  
+  .login-header h2 {
+    font-size: 1.8rem;
+  }
+  
+  .logo-icon {
+    font-size: 2.5rem;
+  }
+  
+  .form-input {
+    padding: 14px 45px 14px 16px;
+    font-size: 16px; /* 防止 iOS 縮放 */
+  }
+  
+  .login-btn {
+    padding: 16px;
+    font-size: 1rem;
+  }
+
+  .form-options {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .remember-me-label {
+    justify-content: center;
+  }
+
+  .forgot-password-btn {
+    text-align: center;
+    padding: 8px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 25px 20px;
+    margin: 10px;
+  }
+  
+  .login-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .logo-icon {
+    font-size: 2rem;
+  }
+  
+  .form-input {
+    padding: 12px 40px 12px 14px;
+  }
+
+  .password-requirements {
+    padding: 12px;
+  }
+
+  .requirements-list li {
+    font-size: 0.85rem;
+  }
+
+  .bg-circle-1 {
+    width: 200px;
+    height: 200px;
+    top: -100px;
+    right: -100px;
+  }
+
+  .bg-circle-2 {
+    width: 150px;
+    height: 150px;
+    bottom: -75px;
+    left: -75px;
+  }
+
+  .bg-circle-3 {
+    width: 100px;
+    height: 100px;
+    right: -50px;
+  }
+}
+
+/* 深色模式支援（可選） */
+@media (prefers-color-scheme: green) {
+  .login-card {
+    background: rgba(30, 30, 30, 0.95);
+    color: #e9ecef;
+  }
+
+  .login-header h2 {
+    color: #f8f9fa;
+  }
+
+  .login-header p {
+    color: #adb5bd;
+  }
+
+  .form-label {
+    color: #e9ecef;
+  }
+
+  .form-input {
+    background: rgba(52, 58, 64, 0.8);
+    border-color: #495057;
+    color: #f8f9fa;
+  }
+
+  .password-requirements {
+    border-color: #495057;
+  }
+
+  .requirements-header small {
+    color: #adb5bd;
+  }
+
+  .checkbox-custom {
+    background: rgba(52, 58, 64, 0.8);
+    border-color: #495057;
+  }
+
+  .register-text {
+    color: #adb5bd;
+  }
+
+  .divider span {
+    background: rgba(255, 255, 255, 0.95);
+  }
+}
+
+/* 動畫效果增強 */
+.form-group {
+  animation: slideInLeft 0.6s ease forwards;
+  opacity: 0;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-options { animation-delay: 0.3s; }
+.login-btn { animation-delay: 0.4s; }
+.register-section { animation-delay: 0.5s; }
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 載入狀態 */
+.login-btn.loading {
+  pointer-events: none;
+}
+
+.login-btn.loading .btn-text {
+  opacity: 0.7;
+}
+
+/* 成功狀態動畫 */
+.form-input.success {
+  border-color: #10b981;
+  background: rgba(236, 253, 245, 0.8);
+}
+
+.form-input.success:focus {
+  border-color: #10b981;
+  box-shadow: 
+    0 0 0 0.2rem rgba(16, 185, 129, 0.15),
+    0 4px 12px rgba(16, 185, 129, 0.1);
+}
+
+/* 聚焦狀態優化 */
+.form-input:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.login-btn:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.toggle-password-btn:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
 }

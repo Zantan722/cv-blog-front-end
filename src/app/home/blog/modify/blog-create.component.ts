@@ -229,7 +229,9 @@ export class BlogCreateComponent extends BaseComponent implements OnInit {
           },
           error: (error) => {
             console.error('❌ Blog 建立失敗:', error);
-            this.notificationService.error('建立文章失敗，請稍後再試');
+            if (typeof error != 'boolean' && typeof error === 'object' && !error.message) {
+              this.notificationService.error('建立文章失敗，請稍後再試');
+            }
           }
         });
     } else {
