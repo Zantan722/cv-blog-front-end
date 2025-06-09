@@ -2,7 +2,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-
 import { BlogComponent } from '../blog.component';
 import { SearchBlogModel } from '../../../models/search-blog.model';
 import { BlogOrderBy } from '../../../enums/blog-orderby.enum';
@@ -22,10 +21,10 @@ export class UserBlogComponent extends BlogComponent implements OnInit {
   protected override isUserSearchPage: boolean = true;
   protected override pageTile: string = '用戶管理Blog介面';
 
- protected override async onComponentInit(): Promise<void> {
+  protected override async onComponentInit(): Promise<void> {
     this.updatePagination();
-    
-    if(!this.isLoggedIn){
+
+    if (!this.isLoggedIn) {
       this.goToLogin();
     }
   }

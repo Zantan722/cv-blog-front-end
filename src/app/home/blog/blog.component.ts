@@ -1,7 +1,7 @@
 import { NotificationService } from './../../service/notification.service';
 import { SearchBlogModel } from '../../models/search-blog.model';
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BlogModel } from '../../models/blog.model';
 import { BlogService } from '../../service/blog.service';
@@ -14,13 +14,16 @@ import { finalize } from 'rxjs';
 import { BaseComponent } from '../base/base.component';
 import { getPublishStatusDisplayName } from '../../enums/publish-status.enum';
 
+
 // Blog 模型
 
 @Component({
   selector: 'app-blog',
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './blog.component.html',
-  styleUrl: './blog.component.css'
+  styleUrl: './blog.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class BlogComponent extends BaseComponent implements OnInit {
 
@@ -49,7 +52,7 @@ export class BlogComponent extends BaseComponent implements OnInit {
   private blogService = inject(BlogService);
   protected notificationService = inject(NotificationService);
 
-  constructor() {
+  constructor(protected cdr: ChangeDetectorRef) {
     super();
     this.searchForm = this.fb.group({
       id: [''],
@@ -70,16 +73,17 @@ export class BlogComponent extends BaseComponent implements OnInit {
   onSearch(): void {
     this.isLoading = true;
     const formValue = this.searchForm.value;
-
-
     const criteria = this.generateCriteria(formValue);
+    this.cdr.markForCheck();
+
     this.blogService.searchBlog(criteria)
       .pipe(
         finalize(() => {
           // ✅ 無論成功或失敗都會執行
           this.currentPage = 1;
-          this.updatePagination();
           this.isLoading = false;
+          this.updatePagination();
+          this.cdr.markForCheck();
           console.log('🏁 請求完成，載入狀態已關閉');
         })
       )
@@ -92,8 +96,9 @@ export class BlogComponent extends BaseComponent implements OnInit {
               const apiResponse = response as ApiResponse<Pageable<BlogModel>>;
               const pageData = apiResponse.data;
 
+
               if (pageData && pageData.list) {
-                this.blogs = pageData?.list || [];
+                this.blogs = [...pageData.list];
                 this.totalItems = pageData.total;
               } else {
                 console.error('❌ ApiResponse 中沒有有效的分頁資料');
@@ -105,13 +110,14 @@ export class BlogComponent extends BaseComponent implements OnInit {
               const pageData = response as unknown as Pageable<BlogModel>;
 
               if (pageData && pageData.list) {
-                this.blogs = pageData?.list || [];
+                this.blogs = [...pageData.list];
                 this.totalItems = pageData.total;
               } else {
                 console.error('❌ 分頁資料格式不正確');
                 this.blogs = [];
                 this.totalItems = 0;
               }
+              this.cdr.markForCheck();
             }
           } catch (error) {
             console.error('❌ 處理回應時發生錯誤:', error);

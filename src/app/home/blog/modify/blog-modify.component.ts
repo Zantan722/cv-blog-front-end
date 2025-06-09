@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router'; //  加入 ActivatedRoute
@@ -30,10 +30,11 @@ export class BlogModifyComponent extends BlogCreateComponent implements OnInit {
     protected override route: ActivatedRoute, //  加入 ActivatedRoute
     protected override notificationService: NotificationService,
     protected override blogService: BlogService,
+    protected override cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) protected override platformId: Object
   ) {
     //  呼叫父類別的 constructor
-    super(fb, route, notificationService, blogService, platformId);
+    super(fb, route, notificationService, blogService, cdr, platformId);
     this.initForm();
   }
 
@@ -87,12 +88,12 @@ export class BlogModifyComponent extends BlogCreateComponent implements OnInit {
       return;
     }
 
-    this.isLoading = true;
+    this.setIsLoading(true);
 
     this.blogService.getBlogDetail(this.blogId)
       .pipe(
         finalize(() => {
-          this.isLoading = false;
+          this.setIsLoading(false);
         })
       )
       .subscribe({
@@ -208,7 +209,7 @@ export class BlogModifyComponent extends BlogCreateComponent implements OnInit {
           next: (response) => {
             console.log(' Blog 更新成功:', response);
             this.notificationService.success('文章更新成功！');
-            this.router.navigate(['/blog/edit', this.blogId]);
+            this.router.navigate(['/blog/', this.blogId]);
           },
           error: (error) => {
             console.error('❌ Blog 更新失敗:', error);
@@ -221,6 +222,11 @@ export class BlogModifyComponent extends BlogCreateComponent implements OnInit {
         this.notificationService.warning(firstError);
       }
     }
+  }
+
+  private setIsLoading(loading:boolean){
+    this.isLoading = loading;
+    this.cdr.markForCheck;
   }
 
   //  覆寫重置方法

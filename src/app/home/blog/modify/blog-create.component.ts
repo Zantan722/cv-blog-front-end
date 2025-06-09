@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormArray, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,14 +13,15 @@ import { BaseComponent } from '../../base/base.component';
   selector: 'app-blog-create',
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './blog-modify.component.html',
-  styleUrl: './blog-modify.component.css'
+  styleUrl: './blog-modify.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BlogCreateComponent extends BaseComponent implements OnInit {
   protected isBrowser: boolean;
 
   createForm!: FormGroup;
-  protected isLoading = false;
   protected isSubmitting = false;
+  protected isLoading = false;
 
   protected pageTitle = '建立新文章'; // ✅ 讓子類別可以覆寫
 
@@ -34,10 +35,11 @@ export class BlogCreateComponent extends BaseComponent implements OnInit {
   tagInput = '';
 
   constructor(
-    protected fb: FormBuilder, 
+    protected fb: FormBuilder,
     protected route: ActivatedRoute,
-    protected notificationService: NotificationService, 
+    protected notificationService: NotificationService,
     protected blogService: BlogService,
+    protected cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) protected platformId: Object
   ) {
     super();
@@ -46,13 +48,13 @@ export class BlogCreateComponent extends BaseComponent implements OnInit {
 
   protected override async onComponentInit(): Promise<void> {
     console.log('🖥️ BlogCreateComponent 開始初始化');
-    
+
     // ✅ 初始化表單
     this.initForm();
 
     if (this.isBrowser) {
       console.log('🖥️ 瀏覽器環境，Blog 建立頁面初始化完成');
-      
+
       // ✅ 檢查用戶是否有權限建立文章
       if (!this.isLoggedIn) {
         console.log('❌ 用戶未登入，跳轉到登入頁');
@@ -60,7 +62,7 @@ export class BlogCreateComponent extends BaseComponent implements OnInit {
         this.goToLogin();
         return;
       }
-      
+
       console.log('✅ 用戶已登入，可以建立文章:', this.getUserName());
     }
   }
@@ -72,6 +74,11 @@ export class BlogCreateComponent extends BaseComponent implements OnInit {
       tags: this.fb.array([]),
       status: [PublishStatus.DRAFT, [Validators.required]]
     });
+  }
+
+  protected setIsSubmit(submit: boolean) {
+    this.isSubmitting = submit;
+    this.cdr.markForCheck;
   }
 
   // 取得標籤 FormArray
@@ -194,7 +201,7 @@ export class BlogCreateComponent extends BaseComponent implements OnInit {
     this.createForm.markAllAsTouched();
 
     if (this.createForm.valid) {
-      this.isSubmitting = true;
+      this.setIsSubmit(true);
 
       const blogData: CreateBlogModel = {
         title: this.createForm.get('title')?.value,
@@ -208,7 +215,7 @@ export class BlogCreateComponent extends BaseComponent implements OnInit {
       this.blogService.createBlog(blogData)
         .pipe(
           finalize(() => {
-            this.isSubmitting = false;
+            this.setIsSubmit(false);
           })
         )
         .subscribe({

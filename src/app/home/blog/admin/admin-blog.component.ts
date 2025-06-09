@@ -1,6 +1,6 @@
 
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { BlogComponent } from '../blog.component';
@@ -22,9 +22,10 @@ export class AdminBlogComponent extends BlogComponent implements OnInit {
   protected isBrowser: boolean;
 
   constructor(
+    protected override cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) protected platformId: Object
   ) {
-    super();
+    super(cdr);
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 

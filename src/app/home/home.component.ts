@@ -19,5 +19,4 @@ export class HomeComponent extends BaseComponent {
   constructor() {
     super();
   }
-
 }
