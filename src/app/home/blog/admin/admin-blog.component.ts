@@ -44,6 +44,11 @@ export class AdminBlogComponent extends BlogComponent implements OnInit {
       if (!this.isAdmin()) {
         this.notificationService.warning("使用者權限不足");
         this.goToBlog();
+      } else {
+        this.onSearch();
+        this.searchForm.valueChanges.subscribe(() => {
+          this.cdr.markForCheck();
+        });
       }
     }
   }

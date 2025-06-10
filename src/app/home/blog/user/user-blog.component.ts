@@ -2,6 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+
 import { BlogComponent } from '../blog.component';
 import { SearchBlogModel } from '../../../models/search-blog.model';
 import { BlogOrderBy } from '../../../enums/blog-orderby.enum';
@@ -26,6 +27,11 @@ export class UserBlogComponent extends BlogComponent implements OnInit {
 
     if (!this.isLoggedIn) {
       this.goToLogin();
+    } else {
+      this.onSearch();
+      this.searchForm.valueChanges.subscribe(() => {
+      this.cdr.markForCheck();
+    });
     }
   }
 
