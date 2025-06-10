@@ -30,7 +30,7 @@ export class AdminBlogComponent extends BlogComponent implements OnInit {
   }
 
 
-  protected override isUserSearchPage: boolean = true;
+  protected override isAdminSearchPage: boolean = true;
   protected override pageTile: string = '管理者管理Blog介面';
   protected override async onComponentInit(): Promise<void> {
     if (this.isBrowser) {

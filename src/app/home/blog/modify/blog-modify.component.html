@@ -74,27 +74,41 @@
       </div>
 
       <!-- 發布狀態 -->
-      <div class="form-group">
-        <label for="status" class="form-label required">發布狀態</label>
-        <select id="status" formControlName="status" class="form-control" [class.error]="isFieldInvalid('status')">
-          <option *ngFor="let option of statusOptions" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
+      <div class="status-field">
+        <label>文章狀態</label>
+        <div class="radio-group">
+          <!-- 草稿選項 -->
+          <div class="radio-option" [class.selected]="createForm.get('status')?.value === 'DRAFT'"
+            (click)="setStatus('DRAFT')">
+            <input type="radio" name="status" value="DRAFT" formControlName="status" id="status-draft">
+            <div class="radio-content">
+              <div class="radio-title">
+                <span class="status-icon">📝</span>
+                草稿
+              </div>
+              <div class="radio-description">
+                文章將儲存但不會公開顯示，您可以稍後再發布
+              </div>
+            </div>
+          </div>
 
-        <div class="field-help">
-          <small *ngIf="createForm.get('status')?.value === 'DRAFT'" class="status-help draft">
-            📝 草稿：文章將儲存但不會公開顯示
-          </small>
-          <small *ngIf="createForm.get('status')?.value === 'PUBLISHED'" class="status-help published">
-            🌍 發布：文章將立即公開，所有人都可以看到
-          </small>
-        </div>
-
-        <div *ngIf="isFieldInvalid('status')" class="error-message">
-          {{ getFieldError('status') }}
+          <!-- 發布選項 -->
+          <div class="radio-option" [class.selected]="createForm.get('status')?.value === 'PUBLISHED'"
+            (click)="setStatus('PUBLISHED')">
+            <input type="radio" name="status" value="PUBLISHED" formControlName="status" id="status-published">
+            <div class="radio-content">
+              <div class="radio-title">
+                <span class="status-icon">🌍</span>
+                發布
+              </div>
+              <div class="radio-description">
+                文章將立即公開，所有人都可以看到
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
 
       <!-- 按鈕區域 -->
       <div class="form-actions">

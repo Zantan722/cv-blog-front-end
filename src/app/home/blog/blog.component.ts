@@ -35,6 +35,7 @@ export class BlogComponent extends BaseComponent implements OnInit {
 
 
   // 頁面判斷
+  protected isAdminSearchPage: boolean = false;
   protected isUserSearchPage = false;
   protected pageTile = 'Blog 查詢系統';
 
@@ -83,7 +84,6 @@ export class BlogComponent extends BaseComponent implements OnInit {
           this.currentPage = 1;
           this.isLoading = false;
           this.updatePagination();
-          this.cdr.markForCheck();
           console.log('🏁 請求完成，載入狀態已關閉');
         })
       )
@@ -199,7 +199,8 @@ export class BlogComponent extends BaseComponent implements OnInit {
     // 計算當前頁面的資料
     // const startIndex = (this.currentPage - 1) * this.pageSize;
     // const endIndex = startIndex + this.pageSize;
-    this.paginatedBlogs = this.blogs;
+    this.paginatedBlogs = [...this.blogs];
+    this.cdr.markForCheck();
   }
 
   // 改變頁面大小

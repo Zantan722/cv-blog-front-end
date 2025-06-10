@@ -22,7 +22,7 @@
         </div>
 
         <!-- 建立者搜尋 -->
-        <div *ngIf="!isUserSearchPage || isAdmin()" class="form-group">
+        <div *ngIf="!isUserSearchPage" class="form-group">
           <label for="author">建立者</label>
           <input type="text" id="author" formControlName="author" placeholder="請輸入建立者姓名" class="form-control">
         </div>
@@ -103,8 +103,8 @@
             <th class="col-title">Title</th>
             <th class="col-creator">建立者</th>
             <th class="col-time">建立時間</th>
-            <th *ngIf="isLoggedIn && (isUserSearchPage || isAdmin())" class="col-actions">發布狀態</th>
-            <th *ngIf="isLoggedIn && (isUserSearchPage || isAdmin())" class="col-actions">操作</th>
+            <th *ngIf="isLoggedIn && (isUserSearchPage || isAdminSearchPage)" class="col-actions">發布狀態</th>
+            <th *ngIf="isLoggedIn && (isUserSearchPage || isAdminSearchPage)" class="col-actions">操作</th>
           </tr>
         </thead>
         <tbody>
@@ -143,11 +143,11 @@
             <td class="col-time">
               <span class="time-text" [class.deleted-text]="blog.deleted">{{ formatDateTime(blog.createDate) }}</span>
             </td>
-            <td *ngIf="isLoggedIn && (isUserSearchPage || isAdmin())" class="col-creator">
+            <td *ngIf="isLoggedIn && (isUserSearchPage || isAdminSearchPage)" class="col-creator">
               <span class="creator-name" [class.deleted-text]="blog.deleted">{{ getStatusDisplayName(blog.status)
                 }}</span>
             </td>
-            <td *ngIf="isLoggedIn && (isUserSearchPage || isAdmin()) && !blog.deleted" class="col-actions">
+            <td *ngIf="isLoggedIn && (isUserSearchPage || isAdminSearchPage) && !blog.deleted" class="col-actions">
               <div class="action-buttons">
                 <button class="btn-action btn-edit" title="編輯" (click)="goToEdit(blog.id)">
                   ✏️

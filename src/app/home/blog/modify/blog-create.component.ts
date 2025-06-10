@@ -1,10 +1,10 @@
 import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormArray, FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { BlogService } from '../../../service/blog.service';
 import { NotificationService } from '../../../service/notification.service';
-import { PublishStatus } from '../../../enums/publish-status.enum';
+import { parsePublishStatus, PublishStatus } from '../../../enums/publish-status.enum';
 import { finalize } from 'rxjs';
 import { CreateBlogModel } from '../../../models/modify-blog.model';
 import { BaseComponent } from '../../base/base.component';
@@ -179,15 +179,12 @@ export class BlogCreateComponent extends BaseComponent implements OnInit {
     return labels[fieldName] || fieldName;
   }
 
-  // 儲存草稿
-  saveDraft(): void {
-    this.createForm.patchValue({ status: PublishStatus.DRAFT });
-    this.onSubmit();
+  setStatus(status: string) {
+    this.createForm.patchValue({ status: parsePublishStatus(status) });
   }
 
   // 發布文章
   publish(): void {
-    this.createForm.patchValue({ status: PublishStatus.PUBLISHED });
     this.onSubmit();
   }
 
