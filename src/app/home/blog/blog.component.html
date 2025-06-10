@@ -205,7 +205,7 @@
       <span>跳至第</span>
       <input type="number" min="1" [max]="totalPages" #pageInput class="page-input"
         (keyup.enter)="goToPage(+pageInput.value); pageInput.value = ''" placeholder="頁">
-      <button class="btn-jump" (click)="goToPage(+pageInput.value); pageInput.value = ''" [disabled]="!pageInput.value">
+      <button class="btn-jump" (click)="goToPage(+pageInput.value); pageInput.value = ''" >
         跳頁
       </button>
     </div>

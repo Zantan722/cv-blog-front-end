@@ -7,6 +7,7 @@ import { ProfileInfo } from '../models/profile.mode';
 import { ApiResponse } from '../models/api-response.model';
 import { JwtHelperService } from './jwt-helper.service';
 import { UserRole } from '../enums/user-role.enum';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,7 @@ export class AuthService {
     private http: HttpClient,
     private jwtHelper: JwtHelperService,
     private router: Router,
+    private notificationService:NotificationService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     // ✅ 在構造函數中初始化
@@ -48,7 +50,7 @@ export class AuthService {
         if (this.jwtHelper.isTokenExpired(token)) {
           console.log('⏰ Token 已過期，清除資料');
           this.clearAuthData();
-          alert('登入已過期請重新登入');
+          this.notificationService.info('登入已過期請重新登入');
           this.router.navigate(['/login']);
         } else {
           this.tokenJWT = token;

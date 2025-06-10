@@ -27,7 +27,6 @@ import { getPublishStatusDisplayName } from '../../enums/publish-status.enum';
 })
 export class BlogComponent extends BaseComponent implements OnInit {
 
-
   searchForm: FormGroup;
   blogs: BlogModel[] = [];
   paginatedBlogs: BlogModel[] = [];
@@ -51,7 +50,6 @@ export class BlogComponent extends BaseComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private blogService = inject(BlogService);
-  protected notificationService = inject(NotificationService);
 
   constructor(protected cdr: ChangeDetectorRef) {
     super();
@@ -65,14 +63,22 @@ export class BlogComponent extends BaseComponent implements OnInit {
   }
 
   protected override async onComponentInit(): Promise<void> {
-    this.updatePagination();
-    // this.onSearch();
+    this.onSearch();
+    this.searchForm.valueChanges.subscribe(() => {
+      this.cdr.markForCheck();
+    });
+  }
+
+  setIsLoading(loading:boolean){
+    this.isShowLoadingModal(loading);
+    this.isLoading = loading;
+    this.cdr.markForCheck;
   }
 
 
   // 搜尋功能
   onSearch(): void {
-    this.isLoading = true;
+    this.setIsLoading(true);
     const formValue = this.searchForm.value;
     const criteria = this.generateCriteria(formValue);
     this.cdr.markForCheck();
@@ -81,8 +87,7 @@ export class BlogComponent extends BaseComponent implements OnInit {
       .pipe(
         finalize(() => {
           // ✅ 無論成功或失敗都會執行
-          this.currentPage = 1;
-          this.isLoading = false;
+          this.setIsLoading(false);
           this.updatePagination();
           console.log('🏁 請求完成，載入狀態已關閉');
         })
@@ -127,6 +132,7 @@ export class BlogComponent extends BaseComponent implements OnInit {
         },
         error: (error: HttpErrorResponse) => {
           console.error('查詢失敗:', error);
+          this.currentPage = 1;
           try {
             const errorData = error.error as ApiResponse;
             if (errorData.message) {
@@ -217,7 +223,7 @@ export class BlogComponent extends BaseComponent implements OnInit {
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.updatePagination();
+      this.onSearch();
     }
   }
 
@@ -225,7 +231,7 @@ export class BlogComponent extends BaseComponent implements OnInit {
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.updatePagination();
+      this.onSearch();
     }
   }
 
@@ -233,7 +239,7 @@ export class BlogComponent extends BaseComponent implements OnInit {
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.updatePagination();
+      this.onSearch();
     }
   }
 

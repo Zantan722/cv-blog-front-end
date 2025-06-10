@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { catchError, throwError, map } from 'rxjs';
 import { ApiResponse } from './models/api-response.model';
 import { isPlatformBrowser } from '@angular/common';
+import { NotificationService } from './service/notification.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   console.log('🚀 Interceptor 執行 - URL:', req.url);
@@ -12,6 +13,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   // const jwt = localStorage.getItem('jwt');
   const platformId = inject(PLATFORM_ID);
+  const notificationService = inject(NotificationService);
 
   // 加入認證標頭
   let authReq = req;
@@ -76,14 +78,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             break;
           case 403:
             console.log('🚫 權限不足' + error.message);
-            window.alert('權限不足');
+            notificationService.warning('權限不足');
             break;
           case undefined:
-            window.alert(error.message);
+            notificationService.error(error.message);
             break;
           default:
             console.log('🔥 系統錯誤');
-            window.alert("系統忙碌中，請稍後再試，若持續發生，請聯繫相關人員");
+            notificationService.error("系統忙碌中，請稍後再試，若持續發生，請聯繫相關人員");
         }
       }
       return throwError(() => error);

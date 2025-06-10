@@ -82,7 +82,7 @@
   min-width: none;
 }
 
-  /* 容器樣式 */
+/* 容器樣式 */
 .blog-query-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -247,8 +247,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* 結果統計 */
@@ -359,6 +364,10 @@
   padding: 15px;
   border-bottom: 1px solid #e9ecef;
   vertical-align: middle;
+}
+
+.blog-table {
+  overflow: hidden
 }
 
 .blog-table tbody tr:hover {
@@ -507,37 +516,37 @@
   .blog-query-container {
     padding: 15px;
   }
-  
+
   .form-row {
     flex-direction: column;
   }
-  
+
   .form-group {
     min-width: 100%;
   }
-  
+
   .button-group {
     justify-content: center;
   }
-  
+
   .btn {
     min-width: 80px;
     padding: 10px 16px;
   }
-  
+
   .page-header h1 {
     font-size: 2rem;
   }
-  
+
   .blog-table {
     font-size: 0.85rem;
   }
-  
+
   .blog-table th,
   .blog-table td {
     padding: 10px 8px;
   }
-  
+
   .action-buttons {
     flex-direction: column;
     gap: 4px;
@@ -548,20 +557,24 @@
   .search-section {
     padding: 15px;
   }
-  
+
   .summary-info {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .blog-table th,
   .blog-table td {
     padding: 8px 6px;
   }
-  
+
   .btn-action {
     width: 32px;
     height: 32px;
     font-size: 1rem;
   }
+}
+
+.page-input {
+  font-size: 18px;
 }

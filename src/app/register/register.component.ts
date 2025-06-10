@@ -24,20 +24,9 @@ export class RegisterComponent extends BaseComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private registerService: RegisterService,
-    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
   ) {
     super();
-    this.registerForm = this.fb.group({
-      email: [''],
-      password: [''],
-      confirmPassword: [''],
-      fullName: ['']
-    });
-  }
-
-
-  protected override async onComponentInit(): Promise<void> {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, this.passwordValidator()]],
@@ -46,7 +35,10 @@ export class RegisterComponent extends BaseComponent implements OnInit {
     }, {
       validators: this.passwordMatchValidator
     });
+  }
 
+
+  protected override async onComponentInit(): Promise<void> {
     this.registerForm.valueChanges.subscribe(() => {
       this.cdr.markForCheck();
     });
@@ -251,6 +243,7 @@ export class RegisterComponent extends BaseComponent implements OnInit {
   }
 
   setIsSubmit(submit: boolean) {
+    this.isShowLoadingModal(submit);
     this.isSubmitting = submit;
     this.cdr.markForCheck;
   }

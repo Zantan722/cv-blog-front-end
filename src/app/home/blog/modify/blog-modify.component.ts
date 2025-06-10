@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router'; //  加入 ActivatedRoute
@@ -28,13 +28,12 @@ export class BlogModifyComponent extends BlogCreateComponent implements OnInit {
     protected override fb: FormBuilder,
     protected override router: Router,
     protected override route: ActivatedRoute, //  加入 ActivatedRoute
-    protected override notificationService: NotificationService,
     protected override blogService: BlogService,
     protected override cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) protected override platformId: Object
   ) {
     //  呼叫父類別的 constructor
-    super(fb, route, notificationService, blogService, cdr, platformId);
+    super(fb, route, blogService, cdr, platformId);
     this.initForm();
   }
 
@@ -227,6 +226,7 @@ export class BlogModifyComponent extends BlogCreateComponent implements OnInit {
   }
 
   private setIsLoading(loading: boolean) {
+    this.isShowLoadingModal(loading)
     this.isLoading = loading;
     this.cdr.markForCheck;
   }

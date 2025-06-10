@@ -1,3 +1,4 @@
+import { NotificationService } from './../../service/notification.service';
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -12,6 +13,7 @@ export abstract class BaseComponent implements OnInit, OnDestroy {
   // ✅ 共享的認證相關屬性
   public authService = inject(AuthService);
   protected router = inject(Router);
+  public notificationService = inject(NotificationService);
 
   isLoggedIn = false;
   userName = '';
@@ -88,6 +90,14 @@ export abstract class BaseComponent implements OnInit, OnDestroy {
       };
       checkInitialized();
     });
+  }
+
+  isShowLoadingModal(show: boolean) {
+    if (show) {
+      this.notificationService.showLoading();
+    } else {
+      this.notificationService.closeLoading();
+    }
   }
 
   // ✅ 更新用戶名稱

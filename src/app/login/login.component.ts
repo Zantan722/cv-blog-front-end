@@ -5,6 +5,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BaseComponent } from '../home/base/base.component';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -32,7 +33,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
   }
 
   protected override async onComponentInit(): Promise<void> {
-    
+
 
     this.loginForm.valueChanges.subscribe(() => {
       this.cdr.markForCheck();
@@ -53,6 +54,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
   }
 
   setIsSubmit(submit: boolean) {
+    this.isShowLoadingModal(submit);
     this.isSubmitting = submit;
     this.cdr.markForCheck();
   }
@@ -152,51 +154,55 @@ export class LoginComponent extends BaseComponent implements OnInit {
       };
 
       console.log('🔑 發送登入請求:', loginData);
+      this.setIsSubmit(true);
+      this.loginService.login(loginData)
+        .pipe(finalize(() => {
+          this.setIsSubmit(false);
+        }))
+        .subscribe({
+          next: (response) => {
+            console.log('登入成功，收到回應:', response);
+            let jwt: string | null = null;
+            if (typeof response === 'string') {
+              // 如果是 token 字串
+              jwt = response;
+            } else if (response && typeof response === 'object') {
+              // 如果是物件，可能包含 token 和 user 資訊
+              if ((response as any).token) {
+                jwt = (response as any).token;
+              }
 
-      this.loginService.login(loginData).subscribe({
-        next: (response) => {
-          console.log('登入成功，收到回應:', response);
-          let jwt: string | null = null;
-          if (typeof response === 'string') {
-            // 如果是 token 字串
-            jwt = response;
-          } else if (response && typeof response === 'object') {
-            // 如果是物件，可能包含 token 和 user 資訊
-            if ((response as any).token) {
-              jwt = (response as any).token;
+            }
+            if (jwt != null) {
+              localStorage.setItem('jwt', jwt);
+              this.authService.login(jwt);
+            }
+            this.router.navigate(['blog']);
+          },
+          error: (error: HttpErrorResponse) => {
+            console.error('登入失敗:', error);
+
+
+            try {
+              const errorData = error;
+
+              if (typeof error != 'boolean' && typeof error === 'object' && !errorData.message) {
+                this.notificationService.error('登入失敗，請檢查帳號密碼');
+              }
+            } catch (e) {
+              this.notificationService.error('登入失敗，請檢查帳號密碼');
             }
 
           }
-          if (jwt != null) {
-            localStorage.setItem('jwt', jwt);
-            this.authService.login(jwt);
-          }
-          this.router.navigate(['blog']);
-        },
-        error: (error: HttpErrorResponse) => {
-          console.error('登入失敗:', error);
-
-
-          try {
-            const errorData = error;
-
-            if (typeof error != 'boolean' && typeof error === 'object' && !errorData.message) {
-              alert('登入失敗，請檢查帳號密碼');
-            }
-          } catch (e) {
-            alert('登入失敗，請檢查帳號密碼');
-          }
-
-        }
-      });
+        });
     } else {
       // 表單驗證失敗的處理
       if (!this.loginForm.get('email')?.valid) {
-        alert("請確認信箱資訊填入正確");
+        this.notificationService.alert("請確認信箱資訊填入正確");
       } else if (this.isPasswordInvalid()) {
-        alert(this.getPasswordErrorMessage());
+        this.notificationService.warning(this.getPasswordErrorMessage());
       } else {
-        alert("請確認資訊皆填入正確");
+        this.notificationService.warning("請確認資訊皆填入正確");
       }
     }
   }

@@ -235,12 +235,10 @@
 
 .requirement-icon::before {
   content: "✗";
-  position: absolute;
+  position: relative;
   left: -25px;
   color: #ef4444;
   font-weight: bold;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
 }
 
 .requirements-list li.valid {
@@ -576,9 +574,7 @@
     padding: 12px 40px 12px 14px;
   }
 
-  .password-requirements {
-    padding: 12px;
-  }
+
 
   .requirements-list li {
     font-size: 0.85rem;
@@ -711,4 +707,11 @@
 .toggle-password-btn:focus-visible {
   outline: 2px solid #667eea;
   outline-offset: 2px;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
 }

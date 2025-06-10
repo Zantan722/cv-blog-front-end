@@ -1,0 +1,29 @@
+<div class="modal-overlay" *ngIf="isVisible" (click)="onOverlayClick()">
+    <div class="modal-container" (click)="$event.stopPropagation()" [class.modal-loading]="config.type === 'loading'">
+        <!-- Modal Header -->
+        <div class="modal-header" [class]="getHeaderClass()">
+            <div class="modal-icon">
+                <span [innerHTML]="getIcon()" [class.spinning]="config.type === 'loading'"></span>
+            </div>
+            <h3 class="modal-title">{{ config.title || getDefaultTitle() }}</h3>
+            <button *ngIf="config.allowClose !== false" class="modal-close" (click)="onCancel()" aria-label="關閉">
+                <span>&times;</span>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+            <p [innerHTML]="config.message"></p>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer" *ngIf="showButtons()">
+            <button *ngIf="config.showCancel" class="modal-btn modal-btn-cancel" (click)="onCancel()">
+                {{ config.cancelText || '取消' }}
+            </button>
+            <button class="modal-btn modal-btn-confirm" [class]="getConfirmButtonClass()" (click)="onConfirm()">
+                {{ config.confirmText || '確定' }}
+            </button>
+        </div>
+    </div>
+</div>

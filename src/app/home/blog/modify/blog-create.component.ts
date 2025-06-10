@@ -3,7 +3,6 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormArray, FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BlogService } from '../../../service/blog.service';
-import { NotificationService } from '../../../service/notification.service';
 import { parsePublishStatus, PublishStatus } from '../../../enums/publish-status.enum';
 import { finalize } from 'rxjs';
 import { CreateBlogModel } from '../../../models/modify-blog.model';
@@ -37,7 +36,6 @@ export class BlogCreateComponent extends BaseComponent implements OnInit {
   constructor(
     protected fb: FormBuilder,
     protected route: ActivatedRoute,
-    protected notificationService: NotificationService,
     protected blogService: BlogService,
     protected cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) protected platformId: Object
@@ -51,6 +49,9 @@ export class BlogCreateComponent extends BaseComponent implements OnInit {
 
     // ✅ 初始化表單
     this.initForm();
+    this.createForm.valueChanges.subscribe(() => {
+      this.cdr.markForCheck();
+    });
 
     if (this.isBrowser) {
       console.log('🖥️ 瀏覽器環境，Blog 建立頁面初始化完成');

@@ -1,5 +1,3 @@
-import { NotificationService } from './../../../service/notification.service';
-// src/app/blog-detail/blog-detail.component.ts
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { BlogModel } from '../../../models/blog.model';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,7 +23,6 @@ export class BlogDetailComponent extends BaseComponent implements OnInit { // �
 
   constructor(
     private route: ActivatedRoute,
-    private notificationService: NotificationService,
     private blogService: BlogService,
     protected cdr: ChangeDetectorRef
   ) {
@@ -90,8 +87,9 @@ export class BlogDetailComponent extends BaseComponent implements OnInit { // �
     });
   }
 
-  private updateIsLoading(loadin: boolean) {
-    this.isLoading = loadin;
+  private updateIsLoading(loading: boolean) {
+    this.isShowLoadingModal(loading);
+    this.isLoading = loading;
     this.cdr.markForCheck();
   }
 
@@ -113,7 +111,7 @@ export class BlogDetailComponent extends BaseComponent implements OnInit { // �
     console.log(this.getUserId());
     console.log(this.userId);
     console.log(this.getUserId() == this.userId)
-    if (this.isAdmin() || this.getUserId() == this.userId) {
+    if (this.isAdmin() || this.getUserId() == this.blog?.userId) {
       this.canEdit = true;
     } else {
       this.canEdit = false;
@@ -155,6 +153,13 @@ export class BlogDetailComponent extends BaseComponent implements OnInit { // �
     if (this.blog) {
       this.router.navigate(['/blog/edit', this.blog.id]);
     }
+  }
+
+  confirmDeleteBlog(): void {
+    this.notificationService.confirm("是否刪除該Blog文章", "注意", async () => {
+      this.deleteBlog();
+    },
+      () => { });
   }
 
   deleteBlog(): void {
