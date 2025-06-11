@@ -40,7 +40,16 @@ docker build -t cv-blog-nginx:latest .
 
 
 ## 測試帳號
+### ADMIN帳號
+
 帳號：admin@gmail.com
+
+密碼：Aaa123123123
+
+
+### USER帳號
+
+帳號：test@gmail.com
 
 密碼：Aaa123123123
 
