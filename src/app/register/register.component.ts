@@ -1,4 +1,3 @@
-import { NotificationService } from '././../service/notification.service';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
@@ -192,10 +191,8 @@ export class RegisterComponent extends BaseComponent implements OnInit {
           error: (error: HttpErrorResponse) => {
             console.error('註冊失敗:', error);
             this.setIsSubmit(false);
-
             try {
-              const errorData = error.error as ApiResponse;
-              if (typeof error != 'boolean' && typeof error === 'object' && !errorData.message) {
+              if (typeof error != 'boolean' && typeof error === 'object' && !error.message) {
                 this.notificationService.error('註冊失敗，請稍後再試');
               }
             } catch (e) {

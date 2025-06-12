@@ -1,6 +1,7 @@
-import { Injectable, ApplicationRef, ComponentFactoryResolver, Injector, EmbeddedViewRef, ComponentRef, inject, ViewContainerRef } from '@angular/core';
+import { Injectable, ApplicationRef, Injector, EmbeddedViewRef, ComponentRef, inject, PLATFORM_ID, createComponent, EnvironmentInjector } from '@angular/core';
 import { ModalConfig } from '../models/modal-config.model';
 import { ModalComponent } from '../modal/modal.component';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -8,11 +9,10 @@ import { ModalComponent } from '../modal/modal.component';
 export class ModalService {
   private modalComponentRef: ComponentRef<ModalComponent> | null = null;
   private appRef: ApplicationRef = inject(ApplicationRef);
-  private injector: Injector = inject(Injector);
-  private viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
-  constructor(
+  private environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
-  ) { }
+  constructor() { }
 
   /**
      * 關閉 Modal
@@ -40,12 +40,18 @@ export class ModalService {
    */
   show(config: ModalConfig): Promise<boolean> {
     return new Promise((resolve) => {
+
+      if (!this.isBrowser) {
+        resolve(false);
+        return;
+      }
+
       // 關閉現有的 Modal
       this.close();
 
       // 創建 Modal 組件
-      this.modalComponentRef = this.viewContainerRef.createComponent(ModalComponent, {
-        injector: this.injector
+      this.modalComponentRef = createComponent(ModalComponent, {
+        environmentInjector: this.environmentInjector
       });
 
       // 設置配置和事件監聽
@@ -197,8 +203,8 @@ export class ModalService {
     this.close();
 
     // 創建 Modal 組件
-    this.modalComponentRef = this.viewContainerRef.createComponent(ModalComponent, {
-      injector: this.injector
+    this.modalComponentRef = createComponent(ModalComponent, {
+      environmentInjector: this.environmentInjector
     });
 
     // 設置 Loading 配置

@@ -184,9 +184,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
 
 
             try {
-              const errorData = error;
-
-              if (typeof error != 'boolean' && typeof error === 'object' && !errorData.message) {
+              if (typeof error != 'boolean' && typeof error === 'object' && !error.message) {
                 this.notificationService.error('登入失敗，請檢查帳號密碼');
               }
             } catch (e) {

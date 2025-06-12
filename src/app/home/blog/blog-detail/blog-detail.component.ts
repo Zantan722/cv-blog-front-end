@@ -35,6 +35,10 @@ export class BlogDetailComponent extends BaseComponent implements OnInit { // âœ
     this.loadBlogDetail();
   }
 
+  private formatContentWithLineBreaks(content: string): string {
+    if (!content) return '';
+    return content.replace(/\n/g, '<br>');
+  }
 
   private loadBlogDetail(): void {
     const blogId = this.route.snapshot.paramMap.get('id');
@@ -97,7 +101,7 @@ export class BlogDetailComponent extends BaseComponent implements OnInit { // âœ
     return {
       id: blog.id || 0,
       title: blog.title || 'ç„¡æ¨™é¡Œ',
-      content: blog.content || '',
+      content: this.formatContentWithLineBreaks(blog.content || ''),
       tags: Array.isArray(blog.tags) ? [...blog.tags] : [],
       createDate: blog.createDate,
       updateDate: blog.updateDate,

@@ -90,6 +90,7 @@
   min-height: 300px;
   line-height: 1.6;
   font-family: 'Courier New', Consolas, monospace;
+  white-space: pre-wrap;
 }
 
 /* 標籤輸入區域 */

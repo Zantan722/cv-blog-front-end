@@ -13,8 +13,8 @@ export class LoginService {
   private http: HttpClient = inject(HttpClient);
   constructor() { }
 
-  login(loginData: LoginModel): Observable<ApiResponse<string>> {
-    return this.http.post<ApiResponse<string>>(`/common/login`, loginData);
+  login(loginData: LoginModel): Observable<string> {
+    return this.http.post<string>(`/common/login`, loginData);
   }
 
   logout(): void {
