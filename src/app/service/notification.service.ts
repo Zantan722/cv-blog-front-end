@@ -1,4 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ModalService } from './modal.service';
 
@@ -6,13 +6,12 @@ import { ModalService } from './modal.service';
   providedIn: 'root'
 })
 export class NotificationService {
-  private isBrowser: boolean;
 
-  constructor(
-    private modalService: ModalService,
-    @Inject(PLATFORM_ID) private platformId: Object) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
-  }
+  private modalService: ModalService = inject(ModalService);
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  constructor() { }
+
 
   /**
    * 顯示警告訊息

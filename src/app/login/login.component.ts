@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { LoginModel } from './../models/login.model';
 import { LoginService } from './../service/login.service';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BaseComponent } from '../home/base/base.component';
@@ -20,11 +20,11 @@ export class LoginComponent extends BaseComponent implements OnInit {
   isSubmitting = false;
   showPassword = false;
 
+  private fb: FormBuilder = inject(FormBuilder);
+  private loginService: LoginService = inject(LoginService);
+  private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-  constructor(
-    private fb: FormBuilder,
-    private loginService: LoginService,
-    private cdr: ChangeDetectorRef) {
+  constructor() {
     super();
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],

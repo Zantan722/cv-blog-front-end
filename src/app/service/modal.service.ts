@@ -1,4 +1,4 @@
-import { Injectable, ApplicationRef, ComponentFactoryResolver, Injector, EmbeddedViewRef, ComponentRef } from '@angular/core';
+import { Injectable, ApplicationRef, ComponentFactoryResolver, Injector, EmbeddedViewRef, ComponentRef, inject, ViewContainerRef } from '@angular/core';
 import { ModalConfig } from '../models/modal-config.model';
 import { ModalComponent } from '../modal/modal.component';
 
@@ -7,11 +7,11 @@ import { ModalComponent } from '../modal/modal.component';
 })
 export class ModalService {
   private modalComponentRef: ComponentRef<ModalComponent> | null = null;
-
+  private appRef: ApplicationRef = inject(ApplicationRef);
+  private injector: Injector = inject(Injector);
+  private viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
   constructor(
-    private componentFactoryResolver: ComponentFactoryResolver,
-    private appRef: ApplicationRef,
-    private injector: Injector
+
   ) { }
 
   /**
@@ -44,8 +44,9 @@ export class ModalService {
       this.close();
 
       // 創建 Modal 組件
-      const componentFactory = this.componentFactoryResolver.resolveComponentFactory(ModalComponent);
-      this.modalComponentRef = componentFactory.create(this.injector);
+      this.modalComponentRef = this.viewContainerRef.createComponent(ModalComponent, {
+        injector: this.injector
+      });
 
       // 設置配置和事件監聽
       this.modalComponentRef.instance.config = config;
@@ -108,8 +109,8 @@ export class ModalService {
    * @returns 用戶選擇結果
    */
   async confirm(
-    message: string, 
-    title?: string, 
+    message: string,
+    title?: string,
     onConfirm?: () => void | Promise<void>,
     onCancel?: () => void | Promise<void>
   ): Promise<boolean> {
@@ -196,8 +197,9 @@ export class ModalService {
     this.close();
 
     // 創建 Modal 組件
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(ModalComponent);
-    this.modalComponentRef = componentFactory.create(this.injector);
+    this.modalComponentRef = this.viewContainerRef.createComponent(ModalComponent, {
+      injector: this.injector
+    });
 
     // 設置 Loading 配置
     this.modalComponentRef.instance.config = {

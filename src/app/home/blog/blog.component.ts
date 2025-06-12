@@ -1,4 +1,3 @@
-import { NotificationService } from './../../service/notification.service';
 import { SearchBlogModel } from '../../models/search-blog.model';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
@@ -50,8 +49,9 @@ export class BlogComponent extends BaseComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private blogService = inject(BlogService);
+  protected cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-  constructor(protected cdr: ChangeDetectorRef) {
+  constructor() {
     super();
     this.searchForm = this.fb.group({
       id: [''],
@@ -69,7 +69,7 @@ export class BlogComponent extends BaseComponent implements OnInit {
     });
   }
 
-  setIsLoading(loading:boolean){
+  setIsLoading(loading: boolean) {
     this.isShowLoadingModal(loading);
     this.isLoading = loading;
     this.cdr.markForCheck;

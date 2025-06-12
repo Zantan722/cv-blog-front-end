@@ -1,6 +1,6 @@
 
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { BlogComponent } from '../blog.component';
@@ -8,6 +8,7 @@ import { SearchBlogModel } from '../../../models/search-blog.model';
 import { BlogOrderBy } from '../../../enums/blog-orderby.enum';
 import { Sort } from '../../../enums/sort.enum';
 import { UserRole } from '../../../enums/user-role.enum';
+import { Platform } from '@angular/cdk/platform';
 
 // Blog 模型
 
@@ -21,11 +22,10 @@ export class AdminBlogComponent extends BlogComponent implements OnInit {
 
   protected isBrowser: boolean;
 
+  protected platformId = inject(Platform);
   constructor(
-    protected override cdr: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) protected platformId: Object
   ) {
-    super(cdr);
+    super();
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormArray, FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -33,13 +33,13 @@ export class BlogCreateComponent extends BaseComponent implements OnInit {
   // 標籤相關
   tagInput = '';
 
-  constructor(
-    protected fb: FormBuilder,
-    protected route: ActivatedRoute,
-    protected blogService: BlogService,
-    protected cdr: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) protected platformId: Object
-  ) {
+  //  所有需要的服務都要在這裡宣告
+  protected fb: FormBuilder = inject(FormBuilder);
+  protected blogService: BlogService = inject(BlogService);
+  protected cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private platformId = inject(PLATFORM_ID);
+
+  constructor() {
     super();
     this.isBrowser = isPlatformBrowser(this.platformId);
   }

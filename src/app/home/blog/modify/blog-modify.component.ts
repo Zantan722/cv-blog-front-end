@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router'; //  加入 ActivatedRoute
@@ -23,17 +23,11 @@ export class BlogModifyComponent extends BlogCreateComponent implements OnInit {
   blogId: number | null = null;
   originalBlog: BlogModel | null = null;
 
-  constructor(
-    //  所有需要的服務都要在這裡宣告
-    protected override fb: FormBuilder,
-    protected override router: Router,
-    protected override route: ActivatedRoute, //  加入 ActivatedRoute
-    protected override blogService: BlogService,
-    protected override cdr: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) protected override platformId: Object
-  ) {
+  protected route: ActivatedRoute = inject(ActivatedRoute) //  加入 ActivatedRoute
+
+  constructor() {
     //  呼叫父類別的 constructor
-    super(fb, route, blogService, cdr, platformId);
+    super();
     this.initForm();
   }
 

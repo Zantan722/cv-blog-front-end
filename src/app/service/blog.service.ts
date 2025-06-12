@@ -1,6 +1,6 @@
 import { SearchBlogModel } from '../models/search-blog.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ApiResponse } from '../models/api-response.model';
 import { Observable } from 'rxjs';
 import { BlogModel } from '../models/blog.model';
@@ -13,7 +13,8 @@ import { CreateBlogModel, ModifyBlogModel } from '../models/modify-blog.model';
 })
 export class BlogService {
 
-  constructor(private http: HttpClient) { }
+  private http: HttpClient = inject(HttpClient);
+  constructor() { }
 
   searchBlog(query: SearchBlogModel): Observable<ApiResponse<Pageable<BlogModel>>> {
     let params = new HttpParams();

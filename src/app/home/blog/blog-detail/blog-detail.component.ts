@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { BlogModel } from '../../../models/blog.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BlogService } from '../../../service/blog.service';
@@ -21,11 +21,11 @@ export class BlogDetailComponent extends BaseComponent implements OnInit { // âœ
   error = '';
   canEdit = false;
 
-  constructor(
-    private route: ActivatedRoute,
-    private blogService: BlogService,
-    protected cdr: ChangeDetectorRef
-  ) {
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private blogService: BlogService = inject(BlogService);
+  protected cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+
+  constructor() {
     super();
   }
 

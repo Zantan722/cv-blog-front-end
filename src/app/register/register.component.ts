@@ -1,6 +1,6 @@
 import { NotificationService } from '././../service/notification.service';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RegisterService } from './../service/regiser.service';
@@ -21,11 +21,11 @@ export class RegisterComponent extends BaseComponent implements OnInit {
   registerForm: FormGroup;
   isSubmitting = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private registerService: RegisterService,
-    private cdr: ChangeDetectorRef
-  ) {
+  private fb: FormBuilder = inject(FormBuilder);
+  private registerService: RegisterService = inject(RegisterService);
+  private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+
+  constructor() {
     super();
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],

@@ -1,5 +1,5 @@
 // modal.component.ts
-import { Component, EventEmitter, Input, Output, OnInit, ComponentFactoryResolver, ApplicationRef, Injector, ComponentRef, EmbeddedViewRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { ModalConfig } from '../models/modal-config.model';
 import { CommonModule } from '@angular/common';
 
@@ -16,13 +16,7 @@ export class ModalComponent implements OnInit {
   @Output() confirmed = new EventEmitter<boolean>();
   @Output() closed = new EventEmitter<void>();
 
-  private modalComponentRef: ComponentRef<ModalComponent> | null = null;
-
-  constructor(
-    private componentFactoryResolver: ComponentFactoryResolver,
-    private appRef: ApplicationRef,
-    private injector: Injector
-  ) { }
+  constructor() { }
 
   ngOnInit() {
     // 監聽 ESC 鍵 (只有在允許關閉時)

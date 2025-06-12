@@ -1,5 +1,5 @@
 // src/app/service/login.service.ts
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { LoginModel } from '../models/login.model';
@@ -10,7 +10,8 @@ import { ApiResponse } from '../models/api-response.model';
 })
 export class LoginService {
 
-  constructor(private http: HttpClient) {}
+  private http: HttpClient = inject(HttpClient);
+  constructor() { }
 
   login(loginData: LoginModel): Observable<ApiResponse<string>> {
     return this.http.post<ApiResponse<string>>(`/common/login`, loginData);

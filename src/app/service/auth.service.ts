@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { inject, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ProfileInfo } from '../models/profile.mode';
@@ -23,12 +23,14 @@ export class AuthService {
   private isInitialized = false;
   private tokenExpirationTimer?: any;
 
+  private http: HttpClient = inject(HttpClient);
+  private jwtHelper: JwtHelperService = inject(JwtHelperService);
+  private router: Router = inject(Router);
+  private notificationService: NotificationService = inject(NotificationService);
+  private platformId = inject(PLATFORM_ID);
+
   constructor(
-    private http: HttpClient,
-    private jwtHelper: JwtHelperService,
-    private router: Router,
-    private notificationService:NotificationService,
-    @Inject(PLATFORM_ID) private platformId: Object
+
   ) {
     // ✅ 在構造函數中初始化
     this.initialize();
